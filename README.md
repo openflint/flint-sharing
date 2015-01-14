@@ -1,6 +1,6 @@
 # flint-sharing
 
-### Activate Python Environment (Windows):
+### Activate Python Environment (Unix):
 
     source /Users/manson/work/browser-extensions/python-env/bin/activate
 
