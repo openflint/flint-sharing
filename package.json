@@ -1,0 +1,22 @@
+{
+  "name": "FlintSharing",
+  "version": "0.1.0",
+  "dependencies": {
+    "js-base64": "2.1.5",
+    "eventemitter3": "^0.1.5",
+    "js-binarypack": "0.0.9",
+    "reliable": "git+https://github.com/michelle/reliable.git"
+  },
+  "devDependencies": {
+    "coffeeify": "^0.7.0",
+    "expect.js": "*",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^3.0.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-coffeeify": "^0.1.3",
+    "grunt-contrib-coffee": "^0.12.0",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-uglify": "^0.5.1",
+    "mocha": "*"
+  }
+}

@@ -1,0 +1,1 @@
+window.FlintReceiverManager = require './FlintReceiverManager'
