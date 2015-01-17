@@ -24,8 +24,8 @@ var screen_constraints = {
 };
 
 var appInfo = {
-    appUrl: 'http://www.baidu.com',
-    useIpc: false,
+    appUrl: 'https://openflint.github.io/screen-sharing-sample/screen_viewer.html',
+    useIpc: true,
     maxInactive: -1
 };
 
