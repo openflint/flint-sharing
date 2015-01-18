@@ -91,7 +91,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
                 senderManager.callReceiverMediaPeer(localStream);
             }
             else {
-                log('Application is launched ! failed!!!');
+                console.log('Application is launched ! failed!!!');
             }
         });
     }, function (error) {
