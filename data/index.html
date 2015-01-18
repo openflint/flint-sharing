@@ -6,5 +6,41 @@
 </head>
 <body>
 
+<script>
+    if (!!navigator.mozGetUserMedia) {
+        screen_constraints = {
+            "audio": false,
+            "video": {
+                "mozMediaSource": "window",
+                "mediaSource": "window",
+                "maxWidth": 1920,
+                "maxHeight": 1080,
+                "minAspectRatio": 1.77
+            }
+        };
+    }
+
+    navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+    navigator.getUserMedia(screen_constraints, function (stream) {
+
+        console.log("Received screen stream.");
+
+        localStream = stream;
+
+        senderManager.setServiceUrl(device.getUrlBase());
+        senderManager.launch(appInfo, function (result, token) {
+            if (result) {
+                console.log('Application is launched ! OK!!! -> ' + token);
+                senderManager.callReceiverMediaPeer(localStream);
+            }
+            else {
+                console.log('Application is launched ! failed!!!');
+            }
+        });
+    }, function (error) {
+        console.error('get media error: ', error);
+    });
+</script>
+
 </body>
 </html>

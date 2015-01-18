@@ -29,26 +29,72 @@ var appInfo = {
     maxInactive: -1
 };
 
-var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', 'http://127.0.0.1:9431', true);
-senderManager.launch(appInfo, function (result, token) {
-    if (result) {
-        console.log('Application is launched ! OK!!! -> ' + token);
-        navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-        navigator.getUserMedia(screen_constraints, function (stream) {
-            console.log("Received camera stream.");
+// share camera
 
-            localStream = stream;
-            var peer = senderManager.callReceiverMediaPeer(stream);
+//var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', 'http://127.0.0.1:9431', true);
+//senderManager.launch(appInfo, function (result, token) {
+//    if (result) {
+//        console.log('Application is launched ! OK!!! -> ' + token);
+//        navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+//        navigator.getUserMedia(screen_constraints, function (stream) {
+//            console.log("Received camera stream.");
+//
+//            localStream = stream;
+//            var peer = senderManager.callReceiverMediaPeer(stream);
+//
+//            stream.onended = function () {
+//                log("screen stream ended.");
+//                peer.destroy();
+//            };
+//        }, function (error) {
+//            console.error(error);
+//        });
+//    }
+//    else {
+//        log('Application is launched ! failed!!!');
+//    }
+//});
 
-            stream.onended = function () {
-                log("screen stream ended.");
-                peer.destroy();
-            };
-        }, function (error) {
-            console.error(error);
+
+// share screen
+getScreenId(function (error, sourceId, screen_constraints) {
+
+    console.log(error);
+    console.log(sourceId);
+    console.log(screen_constraints);
+
+    // Firefox
+    if (!!navigator.mozGetUserMedia) {
+        screen_constraints = {
+            "audio": false,
+            "video": {
+                "mozMediaSource": "window",
+                "mediaSource": "window",
+                "maxWidth": 1920,
+                "maxHeight": 1080,
+                "minAspectRatio": 1.77
+            }
+        };
+    }
+
+    navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+    navigator.getUserMedia(screen_constraints, function (stream) {
+
+        console.log("Received screen stream.");
+
+        localStream = stream;
+
+        senderManager.setServiceUrl(device.getUrlBase());
+        senderManager.launch(appInfo, function (result, token) {
+            if (result) {
+                console.log('Application is launched ! OK!!! -> ' + token);
+                senderManager.callReceiverMediaPeer(localStream);
+            }
+            else {
+                log('Application is launched ! failed!!!');
+            }
         });
-    }
-    else {
-        log('Application is launched ! failed!!!');
-    }
+    }, function (error) {
+        console.error('get media error: ', error);
+    });
 });
