@@ -6,10 +6,19 @@ const appInfo = {
     maxInactive: -1
 };
 
+var sharing = false;
+
 var dlist = document.getElementById("dlist");
 
 var share = document.getElementById("share");
 share.onclick = function () {
+    if (sharing) {
+        alert('Already sharing!!!');
+        return;
+    }
+
+    sharing = true;
+
     var options = dlist.options;
     var device = null;
 
@@ -27,9 +36,9 @@ share.onclick = function () {
     if (!device) {
         alert("Please select a device");
     } else {
-        // todo: start sharing
         console.log('select device: ', device.value, ', text = ', device.text);
 
+        var _stream = null;
         var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', device.value, true);
 
         getScreenId(function (error, sourceId, screen_constraints) {
@@ -50,10 +59,18 @@ share.onclick = function () {
             navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
             navigator.getUserMedia(screen_constraints, function (stream) {
                 console.log("Received screen stream.");
+                _stream = stream;
                 senderManager.launch(appInfo, function (result, token) {
                     if (result) {
                         console.log('Application is launched ! OK!!! -> ' + token);
                         senderManager.callReceiverMediaPeer(stream);
+                        senderManager.on('appstate', function (_, state, additionaldata) {
+                            if (state == 'stopped') {
+                                sharing = false;
+                                stream.stop();
+                                console.log('Receiver application is stopped!!!');
+                            }
+                        });
                     }
                     else {
                         console.log('Application is launched ! failed!!!');
@@ -65,7 +82,15 @@ share.onclick = function () {
         });
 
         var stopBtn = document.getElementById("stop");
-        stopBtn.onclick = function() {
+        stopBtn.onclick = function () {
+            if (!sharing) {
+                alert('Not sharing!!!');
+                return;
+            }
+            sharing = false;
+            if (_stream != null) {
+                _stream.stop();
+            }
             senderManager.stop(appInfo);
         }
     }
