@@ -8,6 +8,13 @@
 </head>
 <body>
 
+
+<div id="input-container">
+    <input id="device-ip" type="text" placeholder="Device IP">
+</div>
+
+<button id="share">Share</button>
+
 <script>
     var appInfo = {
         appUrl: 'https://openflint.github.io/screen-sharing-sample/screen_viewer.html',
@@ -15,49 +22,56 @@
         maxInactive: -1
     };
 
-    var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', 'http://127.0.0.1:9431', true);
+    var deviceIpInput = document.getElementById("device-ip");
+    var share = document.getElementById("share");
 
-    getScreenId(function (error, sourceId, screen_constraints) {
+    share.onclick = function () {
+        var ip = deviceIpInput.value;
+        console.log("input ip ============== ", ip);
+        var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', ip, true);
 
-        console.log(error);
-        console.log(sourceId);
-        console.log(screen_constraints);
+        getScreenId(function (error, sourceId, screen_constraints) {
+            console.log(error);
+            console.log(sourceId);
+            console.log(screen_constraints);
 
-        // Firefox
-        if (!!navigator.mozGetUserMedia) {
-            screen_constraints = {
-                "audio": false,
-                "video": {
-                    "mozMediaSource": "window",
-                    "mediaSource": "window",
-                    "maxWidth": 1920,
-                    "maxHeight": 1080,
-                    "minAspectRatio": 1.77
-                }
-            };
-        }
+            // Firefox
+            if (!!navigator.mozGetUserMedia) {
+                screen_constraints = {
+                    "audio": false,
+                    "video": {
+                        "mozMediaSource": "window",
+                        "mediaSource": "window",
+                        "maxWidth": 1920,
+                        "maxHeight": 1080,
+                        "minAspectRatio": 1.77
+                    }
+                };
+            }
 
-        navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-        navigator.getUserMedia(screen_constraints, function (stream) {
+            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+            navigator.getUserMedia(screen_constraints, function (stream) {
 
-            console.log("Received screen stream.");
+                console.log("Received screen stream.");
 
-            localStream = stream;
+                localStream = stream;
 
-            senderManager.launch(appInfo, function (result, token) {
-                if (result) {
-                    console.log('Application is launched ! OK!!! -> ' + token);
-                    senderManager.callReceiverMediaPeer(localStream);
-                }
-                else {
-                    console.log('Application is launched ! failed!!!');
-                }
+                senderManager.launch(appInfo, function (result, token) {
+                    if (result) {
+                        console.log('Application is launched ! OK!!! -> ' + token);
+                        senderManager.callReceiverMediaPeer(localStream);
+                    }
+                    else {
+                        console.log('Application is launched ! failed!!!');
+                    }
+                });
+            }, function (error) {
+                console.error('get media error: ', error);
             });
-        }, function (error) {
-            console.error('get media error: ', error);
         });
-    });
+    };
 </script>
+
 
 </body>
 </html>
