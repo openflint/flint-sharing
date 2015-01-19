@@ -97,6 +97,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
         }, '*');
     }
 
+    // todo: what's this???
     var iframe = document.createElement('iframe');
     iframe.onload = function() {
         iframe.isLoaded = true;

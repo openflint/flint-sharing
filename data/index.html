@@ -3,75 +3,21 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Flint Sharing</title>
+    <script src="js/jquery.min.js"></script>
     <script src="js/getScreenId.js"></script>
     <script src="js/flint_sender_sdk.js"></script>
 </head>
+
 <body>
-
-
-<div id="input-container">
-    <input id="device-ip" type="text" placeholder="Device IP">
+<div id="ssdparea">
+    <select id="dlist">
+        <option value="">Please choose a device</option>
+    </select>
 </div>
 
-<button id="share">Share</button>
-
-<script>
-    var appInfo = {
-        appUrl: 'https://openflint.github.io/screen-sharing-sample/screen_viewer.html',
-        useIpc: true,
-        maxInactive: -1
-    };
-
-    var deviceIpInput = document.getElementById("device-ip");
-    var share = document.getElementById("share");
-
-    share.onclick = function () {
-        var ip = deviceIpInput.value;
-        console.log("input ip ============== ", ip);
-        var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', ip, true);
-
-        getScreenId(function (error, sourceId, screen_constraints) {
-            console.log(error);
-            console.log(sourceId);
-            console.log(screen_constraints);
-
-            // Firefox
-            if (!!navigator.mozGetUserMedia) {
-                screen_constraints = {
-                    "audio": false,
-                    "video": {
-                        "mozMediaSource": "window",
-                        "mediaSource": "window",
-                        "maxWidth": 1920,
-                        "maxHeight": 1080,
-                        "minAspectRatio": 1.77
-                    }
-                };
-            }
-
-            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-            navigator.getUserMedia(screen_constraints, function (stream) {
-
-                console.log("Received screen stream.");
-
-                localStream = stream;
-
-                senderManager.launch(appInfo, function (result, token) {
-                    if (result) {
-                        console.log('Application is launched ! OK!!! -> ' + token);
-                        senderManager.callReceiverMediaPeer(localStream);
-                    }
-                    else {
-                        console.log('Application is launched ! failed!!!');
-                    }
-                });
-            }, function (error) {
-                console.error('get media error: ', error);
-            });
-        });
-    };
-</script>
-
-
+<div id="control">
+    <button id="share">Share</button>
+    <button id="stop">Stop</button>
+</div>
 </body>
 </html>
