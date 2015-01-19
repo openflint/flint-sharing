@@ -97,12 +97,11 @@ getScreenId(function (error, sourceId, screen_constraints) {
         }, '*');
     }
 
-    // todo: what's this???
     var iframe = document.createElement('iframe');
     iframe.onload = function() {
         iframe.isLoaded = true;
     };
-    iframe.src = 'https://openflint.github.io/screen-sharing-sample/getSourceId/';
+    iframe.src = 'https://openflint.github.io/flint-sharing/data/getSourceId/';
     iframe.style.display = 'none';
     (document.body || document.documentElement).appendChild(iframe);
 })();
