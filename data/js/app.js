@@ -1,7 +1,7 @@
 console.log('FlintSharing luanched!');
 
 const appInfo = {
-    appUrl: 'https://openflint.github.io/screen-sharing-sample/screen_viewer.html',
+    appUrl: 'https://openflint.github.io/flint-sharing/data/screen_receiver.html',
     useIpc: true,
     maxInactive: -1
 };

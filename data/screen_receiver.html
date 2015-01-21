@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Screen Receiver</title>
+    <script src="//openflint.github.io/flint-web-sdk/out/flint_receiver_sdk.js"></script>
+</head>
+<body>
+<video id="video" autoplay></video>
+<script>
+    try {
+        var manager = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
+        var peer = manager.createMediaPeer();
+        peer.on('call', function (call) {
+            console.log("received call!!!");
+            call.answer(null);
+            console.log("receiver answer!!!");
+            call.on('stream', function (remoteStream) {
+                console.log("received stream!!!");
+                var moz = !!navigator.mozGetUserMedia;
+                var video = document.getElementById('video');
+                video[moz ? 'mozSrcObject' : 'src'] = moz ? remoteStream : window.URL.createObjectURL(remoteStream);
+            });
+        });
+        manager.open();
+        console.log('Screen Receiver is started!!!');
+    } catch (e) {
+        console.error(e);
+    }
+</script>
+</body>
+</html>
