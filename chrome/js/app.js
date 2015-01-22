@@ -111,6 +111,12 @@
 ////    console.log('lost device: ', device.deviceName);
 ////});
 
+var appInfo = {
+    appUrl: 'https://openflint.github.io/flint-sharing/data/screen_receiver.html',
+    useIpc: true,
+    maxInactive: -1
+};
+
 var _stream = null;
 //    var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', device.value, true);
 var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', 'http://127.0.0.1:9431', true);
