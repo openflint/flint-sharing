@@ -1,11 +1,11 @@
 {
-    "name": "Hello World!",
-    "description": "My first Chrome App.",
+    "name": "Flint Sharing",
+    "description": "Sharing your desktop!",
     "version": "0.1",
     "manifest_version": 2,
     "app": {
         "background": {
-            "scripts": ["js/background/background.js"]
+            "scripts": ["js/lib/flint_discovery.js", "js/background/background.js"]
         }
     },
     "icons": {
@@ -14,8 +14,8 @@
     },
     "sockets": {
         "udp": {
-            "send": "*",
-            "bind": "*",
+            "send": ":1900",
+            "bind": ":1900",
             "multicastMembership": "" // it chrome's bug, cannot be * here
         }
     },

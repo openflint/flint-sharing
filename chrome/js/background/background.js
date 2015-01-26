@@ -1,3 +1,5 @@
+var deviceScanner = new FlintDeviceScanner();
+
 // app installed callback
 //chrome.app.runtime.onInstalled.addListener(function () {
 //
@@ -17,13 +19,12 @@ chrome.app.runtime.onLaunched.addListener(function () {
         },
         function (appWindow) {
             console.log('create window ok: flint-sharing');
+            chrome.runtime.onConnect.addListener(function (port) {
+                console.log('port on connected in background');
+                deviceScanner.start();
+            });
         }
     );
-
-
-//    chrome.runtime.onConnect.addListener(function (port) {
-//        console.log('port on connected in background');
-//    });
 });
 
 // app exit callback
@@ -33,6 +34,7 @@ chrome.app.runtime.onLaunched.addListener(function () {
 
 // app window close callback
 chrome.app.window.onClosed.addListener(function () {
-
+    console.log('window close!');
+    deviceScanner.stop();
 });
 

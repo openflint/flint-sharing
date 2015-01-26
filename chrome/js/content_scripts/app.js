@@ -1,4 +1,4 @@
-console.log('FlintSharing luanched!');
+console.log("Flint Sharing app run!!!");
 
 const appInfo = {
     appUrl: 'https://openflint.github.io/flint-sharing/receiver/screen_receiver.html',
@@ -6,6 +6,7 @@ const appInfo = {
     maxInactive: -1
 };
 
+var devices = {};
 var sharing = false;
 
 var dlist = document.getElementById("dlist");
@@ -96,15 +97,15 @@ share.onclick = function () {
     }
 };
 
-console.log('FlintSharing send command: scan');
-self.port.emit("scan");
+var port = chrome.runtime.connect();
 
-self.port.on('devicefound', function (device) {
+port.on('devicefound', function (device) {
     console.log('find new device: ', device.deviceName);
-    var ip = device.urlBase;
-    dlist.innerHTML += '<option id="' + ip + '" value="' + ip + '">' + device.deviceName + '</option>';
+    var uniqueId = device.uniqueId;
+    dlist.innerHTML += '<option id="' + uniqueId + '" value="' + uniqueId + '">' + device.deviceName + '</option>';
+    devices[uniqueId] = device;
 });
 
-self.port.on('devicelost', function (device) {
+port.on('devicelost', function (device) {
     console.log('lost device: ', device.deviceName);
 });

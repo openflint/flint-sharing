@@ -33,7 +33,7 @@ function getStream(callback) {
             }
 
             var screen_constraints = getScreenConstraints(sourceId);
-            console.log('screen_constraints:\n', screen_constraints);
+//            console.log('screen_constraints:\n', screen_constraints);
 
             navigator.getUserMedia(screen_constraints, function (stream) {
                 console.log("get media stream!");
