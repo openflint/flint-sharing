@@ -1,0 +1,25 @@
+{
+    "name": "Hello World!",
+    "description": "My first Chrome App.",
+    "version": "0.1",
+    "manifest_version": 2,
+    "app": {
+        "background": {
+            "scripts": ["js/background/background.js"]
+        }
+    },
+    "icons": {
+        "16": "img/icon-16.png",
+        "128": "img/icon-128.png"
+    },
+    "sockets": {
+        "udp": {
+            "send": "*",
+            "bind": "*",
+            "multicastMembership": "" // it chrome's bug, cannot be * here
+        }
+    },
+    "permissions": [
+        "desktopCapture"
+    ]
+}
