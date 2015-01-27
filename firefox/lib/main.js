@@ -24,7 +24,7 @@ var pageWorker = null;
 function launchAddon(state) {
     tabs.open({
 //        url: data.url('index.html'),
-        url: 'https://openflint.github.io/flint-sharing/data/index.html',
+        url: 'https://openflint.github.io/flint-sharing/firefox/data/index.html',
         onOpen: function (tab) {
             console.log('tab is open!!!');
 
