@@ -21,7 +21,27 @@ chrome.app.runtime.onLaunched.addListener(function () {
             console.log('create window ok: flint-sharing');
             chrome.runtime.onConnect.addListener(function (port) {
                 console.log('port on connected in background');
+
+                deviceScanner.on('devicefound', function (device) {
+                    console.log('background found: ', device);
+                    port.postMessage({
+                        type: 'devicefound',
+                        device: device.toJson()
+                    });
+                });
+
+                deviceScanner.on('devicegone', function (device) {
+                    port.postMessage({
+                        type: 'devicegone',
+                        device: device
+                    });
+                });
+
                 deviceScanner.start();
+
+                port.postMessage({
+                    type: 'ready'
+                });
             });
         }
     );

@@ -8,59 +8,63 @@ const appInfo = {
 
 var devices = {};
 var sharing = false;
+var dlist = null;
+var share = null;
 
-var dlist = document.getElementById("dlist");
 
-var share = document.getElementById("share");
-share.onclick = function () {
-    if (sharing) {
-        alert('Already sharing!!!');
-        return;
+var port = chrome.runtime.connect();
+
+port.onMessage.addListener(function (msg) {
+    console.log('port: ', msg);
+    if (msg.type == 'devicefound') {
+        var device = msg.device;
+        console.log('find new device: ', device.deviceName);
+        var uniqueId = device.uniqueId;
+        dlist.innerHTML += '<option id="' + uniqueId + '" value="' + uniqueId + '">' + device.deviceName + '</option>';
+        devices[uniqueId] = device;
+    } else if (msg.type == 'devicegone') {
+        var device = msg.device;
+        console.log('lost device: ', device.deviceName);
+    } else if (msg.type == 'ready') {
+        ready();
     }
+});
 
-    sharing = true;
-
-    var options = dlist.options;
-    var device = null;
-
-    for (var i = 0; i < options.length; i++) {
-        var option = options[i];
-        if (option.selected) {
-            device = {
-                "value": option.value,
-                "text": option.textContent
-            };
-            break;
+function ready() {
+    dlist = document.getElementById("dlist");
+    share = document.getElementById("share");
+    share.onclick = function () {
+        if (sharing) {
+            alert('Already sharing!!!');
+            return;
         }
-    }
 
-    if (!device) {
-        alert("Please select a device");
-    } else {
-        console.log('select device: ', device.value, ', text = ', device.text);
+        sharing = true;
 
-        var _stream = null;
-        var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', device.value, true);
+        var options = dlist.options;
+        var device = null;
 
-        getScreenId(function (error, sourceId, screen_constraints) {
-            // Firefox
-            if (!!navigator.mozGetUserMedia) {
-                screen_constraints = {
-                    "audio": false,
-                    "video": {
-                        "mozMediaSource": "window",
-                        "mediaSource": "window",
-                        "maxWidth": 1920,
-                        "maxHeight": 1080,
-                        "minAspectRatio": 1.77
-                    }
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            if (option.selected) {
+                device = {
+                    "value": option.value,
+                    "text": option.textContent
                 };
+                break;
             }
+        }
 
-            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-            navigator.getUserMedia(screen_constraints, function (stream) {
-                console.log("Received screen stream.");
-                _stream = stream;
+        if (!device) {
+            alert("Please select a device");
+        } else {
+            console.log('select device: ', device.value, ', text = ', device.text);
+
+            getStream(function (error, stream) {
+                if (error != null) {
+                    console.error('app get stream error: ', error);
+                }
+                var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', devices[device.value], true);
                 senderManager.launch(appInfo, function (result, token) {
                     if (result) {
                         console.log('Application is launched ! OK!!! -> ' + token);
@@ -77,35 +81,20 @@ share.onclick = function () {
                         console.log('Application is launched ! failed!!!');
                     }
                 });
-            }, function (error) {
-                console.error('get media error: ', error);
+
+                var stopBtn = document.getElementById("stop");
+                stopBtn.onclick = function () {
+                    if (!sharing) {
+                        alert('Not sharing!!!');
+                        return;
+                    }
+                    sharing = false;
+                    if (stream != null) {
+                        stream.stop();
+                    }
+                    senderManager.stop(appInfo);
+                }
             });
-        });
-
-        var stopBtn = document.getElementById("stop");
-        stopBtn.onclick = function () {
-            if (!sharing) {
-                alert('Not sharing!!!');
-                return;
-            }
-            sharing = false;
-            if (_stream != null) {
-                _stream.stop();
-            }
-            senderManager.stop(appInfo);
         }
-    }
-};
-
-var port = chrome.runtime.connect();
-
-port.on('devicefound', function (device) {
-    console.log('find new device: ', device.deviceName);
-    var uniqueId = device.uniqueId;
-    dlist.innerHTML += '<option id="' + uniqueId + '" value="' + uniqueId + '">' + device.deviceName + '</option>';
-    devices[uniqueId] = device;
-});
-
-port.on('devicelost', function (device) {
-    console.log('lost device: ', device.deviceName);
-});
+    };
+}
