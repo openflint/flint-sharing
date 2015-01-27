@@ -6,6 +6,7 @@ const appInfo = {
     maxInactive: -1
 };
 
+var devices = {};
 var sharing = false;
 
 var dlist = document.getElementById("dlist");
@@ -39,7 +40,7 @@ share.onclick = function () {
         console.log('select device: ', device.value, ', text = ', device.text);
 
         var _stream = null;
-        var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', device.value, true);
+        var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', devices[device.value], true);
 
         getScreenId(function (error, sourceId, screen_constraints) {
             // Firefox
@@ -101,8 +102,9 @@ self.port.emit("scan");
 
 self.port.on('devicefound', function (device) {
     console.log('find new device: ', device.deviceName);
-    var ip = device.urlBase;
-    dlist.innerHTML += '<option id="' + ip + '" value="' + ip + '">' + device.deviceName + '</option>';
+    var uniqueId = device.uniqueId;
+    dlist.innerHTML += '<option id="' + uniqueId + '" value="' + uniqueId + '">' + device.deviceName + '</option>';
+    devices[uniqueId] = device;
 });
 
 self.port.on('devicelost', function (device) {

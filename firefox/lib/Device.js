@@ -27,6 +27,8 @@ const Device = Class({
 
         this.location_ = device['location'];
         this.urlBase_ = device['urlBase'];
+        this.host_ = this.urlBase_.replace('http://', '');
+        this.host_ = this.host_.replace(':9431', '');
     },
 
     triggerTimer: function () {
@@ -78,11 +80,16 @@ const Device = Class({
         return this.urlBase_;
     },
 
+    getHost: function () {
+        return this.host_;
+    },
+
     getDevice: function () {
         return {
             uniqueId: this.uniqueId_,
             location: this.location_,
             urlBase: this.urlBase_,
+            host: this.host_,
             deviceType: this.deviceType_,
             deviceName: this.friendlyName_,
             manufacture: this.manufacturer_,

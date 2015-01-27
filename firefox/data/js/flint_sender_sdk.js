@@ -2059,16 +2059,15 @@ FlintSenderManager = (function(_super) {
   __extends(FlintSenderManager, _super);
 
   function FlintSenderManager(appId, device, useHeartbeat) {
-    var _ref, _ref1;
     this.appId = appId;
     this.device = device;
     this.useHeartbeat = useHeartbeat;
     if (!this.appId || !this.device) {
       throw 'FlintSenderManager constructor error';
     }
-    this.urlBase = (_ref = this.device) != null ? _ref.getUrlBase() : void 0;
+    this.urlBase = this.device.urlBase;
     this.serviceUrl = this.urlBase + '/apps/' + this.appId;
-    this.host = (_ref1 = this.device) != null ? _ref1.getHost() : void 0;
+    this.host = this.device.host;
     if (this.useHeartbeat === void 0) {
       this.useHeartbeat = true;
     }
