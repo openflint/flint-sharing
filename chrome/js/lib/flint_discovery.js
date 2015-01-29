@@ -1,173 +1,5 @@
-/*! flint-web-sdk build:0.1.0, development. Copyright(C) 2013-2014 www.OpenFlint.org */(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var dataBrowser = [
-    {
-        string: navigator.userAgent,
-        subString: "Chrome",
-        identity: "Chrome"
-    },
-    {
-        string: navigator.userAgent,
-        subString: "OmniWeb",
-        versionSearch: "OmniWeb/",
-        identity: "OmniWeb"
-    },
-    {
-        string: navigator.vendor,
-        subString: "Apple",
-        identity: "Safari",
-        versionSearch: "Version"
-    },
-    {
-        prop: window.opera,
-        identity: "Opera",
-        versionSearch: "Version"
-    },
-    {
-        string: navigator.vendor,
-        subString: "iCab",
-        identity: "iCab"
-    },
-    {
-        string: navigator.vendor,
-        subString: "KDE",
-        identity: "Konqueror"
-    },
-    {
-        string: navigator.userAgent,
-        subString: "Firefox",
-        identity: "Firefox"
-    },
-    {
-        string: navigator.vendor,
-        subString: "Camino",
-        identity: "Camino"
-    },
-    {		// for newer Netscapes (6+)
-        string: navigator.userAgent,
-        subString: "Netscape",
-        identity: "Netscape"
-    },
-    {
-        string: navigator.userAgent,
-        subString: "MSIE",
-        identity: "Explorer",
-        versionSearch: "MSIE"
-    },
-    {
-        string: navigator.userAgent,
-        subString: "Gecko",
-        identity: "Mozilla",
-        versionSearch: "rv"
-    },
-    { 		// for older Netscapes (4-)
-        string: navigator.userAgent,
-        subString: "Mozilla",
-        identity: "Netscape",
-        versionSearch: "Mozilla"
-    }
-];
-
-var dataOS = [
-    {
-        string: navigator.platform,
-        subString: "Win",
-        identity: "Windows"
-    },
-    {
-        string: navigator.platform,
-        subString: "Mac",
-        identity: "Mac"
-    },
-    {
-        string: navigator.userAgent,
-        subString: "iPhone",
-        identity: "iPhone/iPod"
-    },
-    {
-        string: navigator.platform,
-        subString: "Linux",
-        identity: "Linux"
-    }
-];
-
-BrowserDetect = function () {
-};
-
-BrowserDetect.prototype.init = function () {
-    this.browser = this.searchString(dataBrowser) || "An unknown browser";
-    this.version = this.searchVersion(navigator.userAgent)
-        || this.searchVersion(navigator.appVersion)
-        || "an unknown version";
-    this.OS = this.searchString(dataOS) || "an unknown OS";
-};
-
-BrowserDetect.prototype.searchString = function (data) {
-    for (var i = 0; i < data.length; i++) {
-        var dataString = data[i].string;
-        var dataProp = data[i].prop;
-        this.versionSearchString = data[i].versionSearch || data[i].identity;
-        if (dataString) {
-            if (dataString.indexOf(data[i].subString) != -1)
-                return data[i].identity;
-        }
-        else if (dataProp)
-            return data[i].identity;
-    }
-};
-
-BrowserDetect.prototype.searchVersion = function (dataString) {
-    var sIndex = dataString.indexOf(this.versionSearchString);
-    if (sIndex == -1) return;
-    var reg = /(?:;|\s|$)/gi;
-    reg.lastIndex = sIndex = sIndex + this.versionSearchString.length + 1;
-    var eIndex = reg.exec(dataString).index;
-    return dataString.substring(sIndex, eIndex);
-    //return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
-};
-
-module.exports = BrowserDetect;
-},{}],2:[function(require,module,exports){
-var BrowserDetect, Platform;
-
-BrowserDetect = require('./BrowserDetect');
-
-Platform = (function() {
-  function Platform() {}
-
-  Platform.detector = null;
-
-  Platform.getPlatform = function() {
-    var platform;
-    if (!Platform.detector) {
-      Platform.detector = new BrowserDetect();
-      Platform.detector.init();
-      if (Platform.detector.browser.toLowerCase() === 'firefox') {
-        if (window.MozActivity !== void 0) {
-          Platform.detector.browser = 'ffos';
-        }
-      } else if (Platform.detector.browser.toLowerCase() === 'chrome') {
-        if (chrome.sockets !== void 0) {
-          Platform.detector.browser = 'chrome_app';
-        }
-      }
-    }
-    platform = {
-      browser: Platform.detector.browser.toLowerCase(),
-      version: Platform.detector.version.toLowerCase(),
-      os: Platform.detector.OS.toLowerCase()
-    };
-    return platform;
-  };
-
-  return Platform;
-
-})();
-
-module.exports = Platform;
-
-
-
-},{"./BrowserDetect":1}],3:[function(require,module,exports){
+/*! flint-web-sdk build:0.1.0, development. Copyright(C) 2013-2014 www.OpenFlint.org */
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var EventEmitter, FlintDevice,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -248,18 +80,14 @@ module.exports = FlintDevice;
 
 
 
-},{"eventemitter3":14}],4:[function(require,module,exports){
-var EventEmitter, FlintDevice, FlintDeviceScanner, MDNSManager, SSDPManager,
+},{"eventemitter3":11}],2:[function(require,module,exports){
+var EventEmitter, FlintDevice, FlintDeviceScanner,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 EventEmitter = require('eventemitter3');
 
 FlintDevice = require('./FlintDevice');
-
-SSDPManager = require('./ssdp/SSDPManager');
-
-MDNSManager = require('./mdns/MDNSManager');
 
 FlintDeviceScanner = (function(_super) {
   var INTERVAL;
@@ -271,39 +99,26 @@ FlintDeviceScanner = (function(_super) {
   function FlintDeviceScanner() {
     this.devices = {};
     this.ssdpManager = null;
-    this.mdnsManager = null;
     this._init();
   }
 
   FlintDeviceScanner.prototype._init = function() {
-    this._initSSDP();
-    return this._initmDns();
+    return this._initSSDP();
+  };
+
+  FlintDeviceScanner.prototype._createSSDP = function() {
+    throw 'Not Implement';
   };
 
   FlintDeviceScanner.prototype._initSSDP = function() {
     console.info('init SSDPManager');
-    this.ssdpManager = new SSDPManager();
+    this.ssdpManager = this._createSSDP();
     this.ssdpManager.on('adddevice', (function(_this) {
       return function(device) {
         return _this._addDevice(device);
       };
     })(this));
     return this.ssdpManager.on('removedevice', (function(_this) {
-      return function(uniqueId) {
-        return _this._removeDevice(uniqueId);
-      };
-    })(this));
-  };
-
-  FlintDeviceScanner.prototype._initmDns = function() {
-    console.info('init MDNSManager');
-    this.mdnsManager = new MDNSManager();
-    this.mdnsManager.on('adddevice', (function(_this) {
-      return function(device) {
-        return _this._addDevice(device);
-      };
-    })(this));
-    return this.mdnsManager.on('removedevice', (function(_this) {
       return function(uniqueId) {
         return _this._removeDevice(uniqueId);
       };
@@ -334,19 +149,13 @@ FlintDeviceScanner = (function(_super) {
   };
 
   FlintDeviceScanner.prototype.start = function() {
-    var _ref, _ref1;
-    if ((_ref = this.ssdpManager) != null) {
-      _ref.start();
-    }
-    return (_ref1 = this.mdnsManager) != null ? _ref1.start() : void 0;
+    var _ref;
+    return (_ref = this.ssdpManager) != null ? _ref.start() : void 0;
   };
 
   FlintDeviceScanner.prototype.stop = function() {
-    var _ref, _ref1;
-    if ((_ref = this.ssdpManager) != null) {
-      _ref.stop();
-    }
-    return (_ref1 = this.mdnsManager) != null ? _ref1.stop() : void 0;
+    var _ref;
+    return (_ref = this.ssdpManager) != null ? _ref.stop() : void 0;
   };
 
   FlintDeviceScanner.prototype.getDeviceList = function() {
@@ -368,42 +177,238 @@ module.exports = FlintDeviceScanner;
 
 
 
-},{"./FlintDevice":3,"./mdns/MDNSManager":6,"./ssdp/SSDPManager":8,"eventemitter3":14}],5:[function(require,module,exports){
-window.FlintDeviceScanner = require('./FlintDeviceScanner');
+},{"./FlintDevice":1,"eventemitter3":11}],3:[function(require,module,exports){
+var FlintDeviceScanner, FlintDeviceScannerChrome, SSDPManagerChrome,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+FlintDeviceScanner = require('../FlintDeviceScanner');
+
+SSDPManagerChrome = require('./SSDPManagerChrome');
+
+FlintDeviceScannerChrome = (function(_super) {
+  var INTERVAL;
+
+  __extends(FlintDeviceScannerChrome, _super);
+
+  INTERVAL = 10 * 1000;
+
+  function FlintDeviceScannerChrome() {
+    FlintDeviceScannerChrome.__super__.constructor.apply(this, arguments);
+  }
+
+  FlintDeviceScannerChrome.prototype._createSSDP = function() {
+    return new SSDPManagerChrome();
+  };
+
+  return FlintDeviceScannerChrome;
+
+})(FlintDeviceScanner);
+
+module.exports = FlintDeviceScannerChrome;
 
 
 
-},{"./FlintDeviceScanner":4}],6:[function(require,module,exports){
-var EventEmitter, MDNSManager,
+},{"../FlintDeviceScanner":2,"./SSDPManagerChrome":4}],4:[function(require,module,exports){
+var SSDPManager, SSDPManagerChrome, SSDPResponderChrome,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+SSDPManager = require('../ssdp/SSDPManager');
+
+SSDPResponderChrome = require('./SSDPResponderChrome');
+
+SSDPManagerChrome = (function(_super) {
+  __extends(SSDPManagerChrome, _super);
+
+  function SSDPManagerChrome() {
+    SSDPManagerChrome.__super__.constructor.apply(this, arguments);
+  }
+
+  SSDPManagerChrome.prototype._createSSDPResponder = function(options) {
+    return new SSDPResponderChrome(options);
+  };
+
+  SSDPManagerChrome.prototype._createXhr = function() {
+    return new XMLHttpRequest();
+  };
+
+  return SSDPManagerChrome;
+
+})(SSDPManager);
+
+module.exports = SSDPManagerChrome;
+
+
+
+},{"../ssdp/SSDPManager":9,"./SSDPResponderChrome":5}],5:[function(require,module,exports){
+var SSDPResponder, SSDPResponderChrome, UdpSocketChrome,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+SSDPResponder = require('../ssdp/SSDPResponder');
+
+UdpSocketChrome = require('./UdpSocketChrome');
+
+SSDPResponderChrome = (function(_super) {
+  __extends(SSDPResponderChrome, _super);
+
+  function SSDPResponderChrome(options) {
+    this.options = options;
+    SSDPResponderChrome.__super__.constructor.call(this, options);
+  }
+
+  SSDPResponderChrome.prototype._createUdpSocket = function(options) {
+    return new UdpSocketChrome(options);
+  };
+
+  return SSDPResponderChrome;
+
+})(SSDPResponder);
+
+module.exports = SSDPResponderChrome;
+
+
+
+},{"../ssdp/SSDPResponder":10,"./UdpSocketChrome":6}],6:[function(require,module,exports){
+var EventEmitter, UdpSocketChrome,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 EventEmitter = require('eventemitter3');
 
-MDNSManager = (function(_super) {
-  __extends(MDNSManager, _super);
+UdpSocketChrome = (function(_super) {
+  __extends(UdpSocketChrome, _super);
 
-  function MDNSManager() {
-    null;
+  UdpSocketChrome.ab2str = function(buf) {
+    return String.fromCharCode.apply(null, new Uint8Array(buf));
+  };
+
+  UdpSocketChrome.str2ab = function(str) {
+    var buf, bufView, i, _;
+    buf = new ArrayBuffer(str.length);
+    bufView = new Uint8Array(buf);
+    for (i in str) {
+      _ = str[i];
+      bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+  };
+
+  function UdpSocketChrome(options) {
+    this.options = options;
+    this.localPort_ = options.localPort;
+    this.loopback_ = options.loopback;
+    this.socketId_ = -1;
+    this._init();
   }
 
-  MDNSManager.prototype.start = function() {
-    return null;
+  UdpSocketChrome.prototype._init = function() {
+    var udpInfo;
+    udpInfo = {
+      'persistent': false,
+      'name': 'Flint',
+      'bufferSize': 4096
+    };
+    return chrome.sockets.udp.create(udpInfo, (function(_this) {
+      return function(createInfo) {
+        _this.socketId_ = createInfo.socketId;
+        console.log('create UdpSocket: ', _this.socketId_);
+        chrome.sockets.udp.setMulticastLoopbackMode(_this.socketId_, _this.loopback_, function(result) {
+          return console.log('setMulticastLoopbackMode UdpSocket: loopback=', _this.loopback_, ', result=', result);
+        });
+        chrome.sockets.udp.bind(_this.socketId_, '0.0.0.0', _this.localPort_, function(result) {
+          console.log('bind UdpSocket: port=', _this.localPort_, ', result=', result);
+          return _this.emit('bind');
+        });
+        chrome.sockets.udp.onReceive.addListener(function(info) {
+          if (_this.socketId_ === info.socketId) {
+            return _this._onMessage(UdpSocketChrome.ab2str(info.data));
+          }
+        });
+        chrome.sockets.udp.onReceive.addListener(function(info) {
+          if (_this.socketId_ === info.socketId) {
+            return _this._onError('error');
+          }
+        });
+        return _this.emit('create');
+      };
+    })(this));
   };
 
-  MDNSManager.prototype.stop = function() {
-    return null;
+  UdpSocketChrome.prototype._onMessage = function(data) {
+    if (this.onPacket) {
+      return this.onPacket(data);
+    }
   };
 
-  return MDNSManager;
+  UdpSocketChrome.prototype._onError = function(error) {
+    if (this.onError) {
+      return this.onError(error);
+    }
+  };
+
+  UdpSocketChrome.prototype.joinMulticastGroup = function(addr) {
+    if (this.socketId_ === -1) {
+      return this.once('create', (function(_this) {
+        return function() {
+          return _this._joinMulticastGroup(addr);
+        };
+      })(this));
+    } else {
+      return this._joinMulticastGroup(addr);
+    }
+  };
+
+  UdpSocketChrome.prototype._joinMulticastGroup = function(addr) {
+    return chrome.sockets.udp.joinGroup(this.socketId_, addr, (function(_this) {
+      return function(result) {
+        return console.log('joinGroup UdpSocket: addr=', addr, ', result=', result);
+      };
+    })(this));
+  };
+
+  UdpSocketChrome.prototype.send = function(data, addr, port) {
+    var _data;
+    if (this.socketId_ === -1) {
+      return;
+    }
+    _data = UdpSocketChrome.str2ab(data);
+    return chrome.sockets.udp.send(this.socketId_, _data, addr, port, (function(_this) {
+      return function(sendInfo) {
+        if (sendInfo.resultCode < 0) {
+          return console.error('UdpSocket: send error!!!');
+        } else {
+          return console.log('UdpSocket: send success, ', sendInfo.bytesSent);
+        }
+      };
+    })(this));
+  };
+
+  UdpSocketChrome.prototype.close = function() {
+    if (this.socketId_) {
+      return chrome.sockets.udp.close(this.socketId_, (function(_this) {
+        return function() {
+          return console.log('socket closed! ', _this.socketId_);
+        };
+      })(this));
+    }
+  };
+
+  return UdpSocketChrome;
 
 })(EventEmitter);
 
-module.exports = MDNSManager;
+module.exports = UdpSocketChrome;
 
 
 
-},{"eventemitter3":14}],7:[function(require,module,exports){
+},{"eventemitter3":11}],7:[function(require,module,exports){
+window.FlintDeviceScanner = require('./FlintDeviceScannerChrome');
+
+
+
+},{"./FlintDeviceScannerChrome":3}],8:[function(require,module,exports){
 var FlintDevice, SSDPDevice,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -437,8 +442,8 @@ module.exports = SSDPDevice;
 
 
 
-},{"../FlintDevice":3}],8:[function(require,module,exports){
-var EventEmitter, SSDPDevice, SSDPManager, SSDPResponder, XhrGenerator,
+},{"../FlintDevice":1}],9:[function(require,module,exports){
+var EventEmitter, SSDPDevice, SSDPManager, SSDPResponder,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -448,14 +453,12 @@ SSDPResponder = require('./SSDPResponder');
 
 SSDPDevice = require('./SSDPDevice');
 
-XhrGenerator = require('../../xhr/XhrGenerator');
-
 SSDPManager = (function(_super) {
   __extends(SSDPManager, _super);
 
   function SSDPManager() {
     this.devices = {};
-    this.ssdp = new SSDPResponder({
+    this.ssdp = this._createSSDPResponder({
       st: 'urn:dial-multiscreen-org:service:dial:1'
     });
     this.ssdp.on('serviceFound', (function(_this) {
@@ -483,6 +486,10 @@ SSDPManager = (function(_super) {
     })(this));
   }
 
+  SSDPManager.prototype._createSSDPResponder = function(options) {
+    throw 'Not Implement';
+  };
+
   SSDPManager.prototype.start = function() {
     return this.ssdp.start();
   };
@@ -493,7 +500,7 @@ SSDPManager = (function(_super) {
 
   SSDPManager.prototype._fetchDeviceDesc = function(url) {
     var xhr;
-    xhr = XhrGenerator.createXMLHttpRequest();
+    xhr = this._createXhr();
     if (!xhr) {
       throw '_fetchDeviceDesc: failed';
     }
@@ -506,6 +513,10 @@ SSDPManager = (function(_super) {
       };
     })(this);
     return xhr.send('');
+  };
+
+  SSDPManager.prototype._createXhr = function() {
+    throw 'Not Implement';
   };
 
   SSDPManager.prototype._parseDeviceDesc = function(data, url) {
@@ -564,14 +575,12 @@ module.exports = SSDPManager;
 
 
 
-},{"../../xhr/XhrGenerator":13,"./SSDPDevice":7,"./SSDPResponder":9,"eventemitter3":14}],9:[function(require,module,exports){
-var EventEmitter, SEARCH_INTERVAL, SSDPResponder, SSDP_ADDRESS, SSDP_DISCOVER_MX, SSDP_DISCOVER_PACKET, SSDP_HEADER, SSDP_PORT, SSDP_RESPONSE_HEADER, SSDP_SEARCH_TARGET, SocketGenerator,
+},{"./SSDPDevice":8,"./SSDPResponder":10,"eventemitter3":11}],10:[function(require,module,exports){
+var EventEmitter, SEARCH_INTERVAL, SSDPResponder, SSDP_ADDRESS, SSDP_DISCOVER_MX, SSDP_DISCOVER_PACKET, SSDP_HEADER, SSDP_PORT, SSDP_RESPONSE_HEADER, SSDP_SEARCH_TARGET,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 EventEmitter = require('eventemitter3');
-
-SocketGenerator = require('../../socket/SocketGenerator');
 
 SEARCH_INTERVAL = 5 * 1000;
 
@@ -600,16 +609,20 @@ SSDPResponder = (function(_super) {
   }
 
   SSDPResponder.prototype._init = function() {
-    this.socket = SocketGenerator.createUdpSocket({
-      loopback: true,
+    this.socket = this._createUdpSocket({
+      loopback: false,
       localPort: SSDP_PORT
     });
     this.socket.joinMulticastGroup(SSDP_ADDRESS);
-    return this.socket.onPacketReceived = (function(_this) {
+    return this.socket.onPacket = (function(_this) {
       return function(packet) {
         return _this._onData(packet);
       };
     })(this);
+  };
+
+  SSDPResponder.prototype._createUdpSocket = function(options) {
+    throw 'Not Implement';
   };
 
   SSDPResponder.prototype.start = function() {
@@ -695,259 +708,7 @@ module.exports = SSDPResponder;
 
 
 
-},{"../../socket/SocketGenerator":10,"eventemitter3":14}],10:[function(require,module,exports){
-var ChromeUdpSocket, FfosUdpSocket, Platform, SocketGenerator;
-
-Platform = require('../common/Platform');
-
-ChromeUdpSocket = require('./chrome_app/ChromeUdpSocket');
-
-FfosUdpSocket = require('./ffos/FfosUdpSocket');
-
-SocketGenerator = (function() {
-  function SocketGenerator() {}
-
-  SocketGenerator.createUdpSocket = function(options) {
-    var e, platform;
-    platform = Platform.getPlatform();
-    try {
-      switch (platform.browser) {
-        case 'ffos':
-          return new FfosUdpSocket(options);
-        case 'chrome_app':
-          return new ChromeUdpSocket(options);
-        default:
-          return null;
-      }
-    } catch (_error) {
-      e = _error;
-      return console.error('catch: ', e);
-    }
-  };
-
-  return SocketGenerator;
-
-})();
-
-module.exports = SocketGenerator;
-
-
-
-},{"../common/Platform":2,"./chrome_app/ChromeUdpSocket":11,"./ffos/FfosUdpSocket":12}],11:[function(require,module,exports){
-var ChromeUdpSocket, EventEmitter,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-EventEmitter = require('eventemitter3');
-
-ChromeUdpSocket = (function(_super) {
-  __extends(ChromeUdpSocket, _super);
-
-  ChromeUdpSocket.ab2str = function(buf) {
-    return String.fromCharCode.apply(null, new Uint8Array(buf));
-  };
-
-  ChromeUdpSocket.str2ab = function(str) {
-    var buf, bufView, i, _;
-    buf = new ArrayBuffer(str.length);
-    bufView = new Uint8Array(buf);
-    for (i in str) {
-      _ = str[i];
-      bufView[i] = str.charCodeAt(i);
-    }
-    return buf;
-  };
-
-  function ChromeUdpSocket(options) {
-    this.options = options;
-    this.localPort_ = options.localPort;
-    this.loopback_ = options.loopback;
-    this.socketId_ = -1;
-    this._init();
-  }
-
-  ChromeUdpSocket.prototype._init = function() {
-    var info;
-    info = {
-      'persistent': false,
-      'name': 'udpSocket',
-      'bufferSize': 4096
-    };
-    return chrome.sockets.udp.create({}, (function(_this) {
-      return function(createInfo) {
-        _this.socketId_ = createInfo.socketId;
-        console.log('create UdpSocket: ', _this.socketId_);
-        return chrome.sockets.udp.bind(_this.socketId_, '0.0.0.0', _this.localPort_, function(result) {
-          console.log('bind UdpSocket: port=', _this.localPort_, ', result=', result);
-          chrome.sockets.udp.onReceive.addListener(function(info) {
-            if (_this.socketId_ === info.socketId) {
-              return _this._onMessage(ChromeUdpSocket.ab2str(info.data));
-            }
-          });
-          chrome.sockets.udp.onReceive.addListener(function(info) {
-            if (_this.socketId_ === info.socketId) {
-              return _this._onError('error');
-            }
-          });
-          return _this.emit('ready');
-        });
-      };
-    })(this));
-  };
-
-  ChromeUdpSocket.prototype._onMessage = function(data) {
-    if (this.onPacketReceived) {
-      return this.onPacketReceived(data);
-    }
-  };
-
-  ChromeUdpSocket.prototype._onError = function(error) {
-    if (this.onerror) {
-      return this.onerror(error);
-    }
-  };
-
-  ChromeUdpSocket.prototype.joinMulticastGroup = function(addr) {
-    if (this.socketId_ === -1) {
-      return this.once('ready', (function(_this) {
-        return function() {
-          return chrome.sockets.udp.joinGroup(_this.socketId_, addr, function(result) {
-            return console.log('joinGroup UdpSocket: addr=', addr, ', result=', result);
-          });
-        };
-      })(this));
-    } else {
-      return chrome.sockets.udp.joinGroup(this.socketId_, addr, (function(_this) {
-        return function(result) {
-          return console.log('joinGroup UdpSocket: addr=', addr, ', result=', result);
-        };
-      })(this));
-    }
-  };
-
-  ChromeUdpSocket.prototype.send = function(data, addr, port) {
-    var _data;
-    if (!this.socketId_) {
-      return;
-    }
-    _data = ChromeUdpSocket.str2ab(data);
-    return chrome.sockets.udp.send(this.socketId_, _data, addr, port, (function(_this) {
-      return function(sendInfo) {
-        if (sendInfo.resultCode < 0) {
-          return console.error('UdpSocket: send error!!!');
-        } else {
-          return console.log('UdpSocket: send success, ', sendInfo.bytesSent);
-        }
-      };
-    })(this));
-  };
-
-  ChromeUdpSocket.prototype.close = function() {
-    if (this.socketId_) {
-      return chrome.sockets.udp.close(this.socketId_, (function(_this) {
-        return function() {
-          return console.log('socket closed! ', _this.socketId_);
-        };
-      })(this));
-    }
-  };
-
-  return ChromeUdpSocket;
-
-})(EventEmitter);
-
-module.exports = ChromeUdpSocket;
-
-
-
-},{"eventemitter3":14}],12:[function(require,module,exports){
-var EventEmitter, FfosUdpSocket,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-EventEmitter = require('eventemitter3');
-
-FfosUdpSocket = (function(_super) {
-  __extends(FfosUdpSocket, _super);
-
-  function FfosUdpSocket(options) {
-    this.options = options;
-    this.localPort_ = options.localPort;
-    this.loopback_ = options.loopback;
-    this.socket_ = new UDPSocket(options);
-    this.socket.onmessage = (function(_this) {
-      return function(event) {
-        var data;
-        data = String.fromCharCode.apply(null, new Uint8Array(event.data));
-        return _onMessage(data);
-      };
-    })(this);
-  }
-
-  FfosUdpSocket.prototype._onMessage = function(data) {
-    if (this.onPacketReceived) {
-      return this.onPacketReceived(data);
-    }
-  };
-
-  FfosUdpSocket.prototype.joinMulticastGroup = function(addr) {
-    var _ref;
-    return (_ref = this.socket) != null ? _ref.joinMulticastGroup(addr) : void 0;
-  };
-
-  FfosUdpSocket.prototype.send = function(data, addr, port) {
-    var _ref;
-    return (_ref = this.socket) != null ? _ref.send(data, addr, port) : void 0;
-  };
-
-  FfosUdpSocket.prototype.close = function() {
-    var _ref;
-    return (_ref = this.socket) != null ? _ref.close() : void 0;
-  };
-
-  return FfosUdpSocket;
-
-})(EventEmitter);
-
-module.exports = FfosUdpSocket;
-
-
-
-},{"eventemitter3":14}],13:[function(require,module,exports){
-var Platform, XhrGenerator;
-
-Platform = require('../common/Platform');
-
-XhrGenerator = (function() {
-  function XhrGenerator() {}
-
-  XhrGenerator.createXMLHttpRequest = function() {
-    var e, platform;
-    platform = Platform.getPlatform();
-    try {
-      switch (platform.browser) {
-        case 'ffos':
-          return new XMLHttpRequest({
-            mozSystem: true
-          });
-        default:
-          return new XMLHttpRequest();
-      }
-    } catch (_error) {
-      e = _error;
-      return console.error('catch: ', e);
-    }
-  };
-
-  return XhrGenerator;
-
-})();
-
-module.exports = XhrGenerator;
-
-
-
-},{"../common/Platform":2}],14:[function(require,module,exports){
+},{"eventemitter3":11}],11:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1178,4 +939,4 @@ EventEmitter.EventEmitter3 = EventEmitter;
 //
 module.exports = EventEmitter;
 
-},{}]},{},[5]);
+},{}]},{},[7]);

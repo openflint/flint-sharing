@@ -10,6 +10,9 @@ var allowed_domains_pref = 'media.getusermedia.screensharing.allowed_domains';
 var enable_screensharing_pref = 'media.getusermedia.screensharing.enabled';
 var enable_mixed_content_pref = 'security.mixed_content.block_active_content';
 
+// todo:
+// enable: dom.udpsocket.enabled
+
 // support WindowsXP
 var enable_screensharing_on_old_platforms_pref = 'media.getusermedia.screensharing.allow_on_old_platforms';
 

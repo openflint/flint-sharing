@@ -32,6 +32,38 @@ port.onMessage.addListener(function (msg) {
 
 function ready() {
     dlist = document.getElementById("dlist");
+
+    var stopBtn = document.getElementById("stop");
+    stopBtn.onclick = function () {
+        sharing = false;
+
+        var options = dlist.options;
+        var device = null;
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            if (option.selected) {
+                device = {
+                    "value": option.value,
+                    "text": option.textContent
+                };
+                break;
+            }
+        }
+
+        if (!device) {
+            alert("Please select a device");
+        } else {
+            var options = {
+                appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
+                urlBase: devices[device.value].urlBase,
+                host: devices[device.value].host,
+                useHeartbeat: true
+            };
+            var senderManager = new FlintSenderManager(options);
+            senderManager.stop(appInfo);
+        }
+    };
+
     share = document.getElementById("share");
     share.onclick = function () {
         if (sharing) {
@@ -64,7 +96,24 @@ function ready() {
                 if (error != null) {
                     console.error('app get stream error: ', error);
                 }
-                var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', devices[device.value], true);
+
+                port.postMessage({
+                    type: 'stream',
+                    stream: stream
+                });
+
+                port.postMessage({
+                    type: 'device',
+                    device: devices[device.value]
+                });
+
+                var options = {
+                    appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
+                    urlBase: devices[device.value].urlBase,
+                    host: devices[device.value].host,
+                    useHeartbeat: true
+                };
+                var senderManager = new FlintSenderManager(options);
                 senderManager.launch(appInfo, function (result, token) {
                     if (result) {
                         console.log('Application is launched ! OK!!! -> ' + token);
@@ -82,8 +131,7 @@ function ready() {
                     }
                 });
 
-                var stopBtn = document.getElementById("stop");
-                stopBtn.onclick = function () {
+                document.getElementById("stop").onclick = function () {
                     if (!sharing) {
                         alert('Not sharing!!!');
                         return;
@@ -93,7 +141,15 @@ function ready() {
                         stream.stop();
                     }
                     senderManager.stop(appInfo);
-                }
+                };
+
+                chrome.app.window.current().onClosed.addListener(function () {
+                    sharing = false;
+                    if (stream != null) {
+                        stream.stop();
+                    }
+                    senderManager.stop(appInfo);
+                });
             });
         }
     };

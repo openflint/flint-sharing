@@ -1,9 +1,11 @@
 var deviceScanner = new FlintDeviceScanner();
+var stream = null;
+var device = null;
 
 // app installed callback
-//chrome.app.runtime.onInstalled.addListener(function () {
-//
-//});
+chrome.runtime.onInstalled.addListener(function () {
+    console.log('Flint Sharing installed!!!');
+});
 
 // app launched callback
 chrome.app.runtime.onLaunched.addListener(function () {
@@ -18,9 +20,25 @@ chrome.app.runtime.onLaunched.addListener(function () {
             'resizable': false
         },
         function (appWindow) {
+            appWindow.onClosed.addListener(function () {
+                console.log('window closed!');
+                deviceScanner.stop();
+            });
+
             console.log('create window ok: flint-sharing');
             chrome.runtime.onConnect.addListener(function (port) {
                 console.log('port on connected in background');
+
+                port.onMessage.addListener(function (msg) {
+                    console.log('port: ', msg);
+                    if (msg.type == 'stream') {
+                        console.log('background get stream: ', msg.stream);
+                        stream = msg.stream;
+                    } else if (msg.type == 'device') {
+                        console.log('background get device: ', msg.device);
+                        device = msg.device;
+                    }
+                });
 
                 deviceScanner.on('devicefound', function (device) {
                     console.log('background found: ', device);
@@ -47,14 +65,7 @@ chrome.app.runtime.onLaunched.addListener(function () {
     );
 });
 
-// app exit callback
-//chrome.app.runtime.onSuspend.addListener(function () {
-//
-//});
-
-// app window close callback
-chrome.app.window.onClosed.addListener(function () {
-    console.log('window close!');
-    deviceScanner.stop();
+// background unload callback
+chrome.runtime.onSuspend.addListener(function () {
+    console.log('background suspend!!!');
 });
-

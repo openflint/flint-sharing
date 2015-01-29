@@ -24,7 +24,7 @@ const SSDPResponder = Class({
 
     initialize: function () {
         let self = this;
-        this.udp_ = UDPSocket('239.255.255.250', 1900);
+        this.udp_ = new UDPSocket('239.255.255.250', 1900);
         this.udp_.on('data', function (data) {
             self._onData(data);
         });

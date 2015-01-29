@@ -5,6 +5,9 @@ var data = require('sdk/self').data;
 const { DeviceManager } = require('./DeviceManager');
 const { Enabler } = require('./Enabler');
 
+//const { FlintDeviceScanner } = require('./sdk/flint_discovery');
+const { ExportTest } = require('./sdk/ExportTest');
+const { SubTest } = require('./sdk/sub/SubTest');
 
 var button = buttons.ActionButton({
     id: 'flint-sharing',
@@ -22,6 +25,13 @@ var deviceManager = null;
 var pageWorker = null;
 
 function launchAddon(state) {
+    console.error('------------');
+    console.error('ExportTest------------', ExportTest);
+    console.error('SubText------------', SubTest);
+    var t = new SubTest();
+    t.logSub();
+    t.log();
+    console.error('------------');
     tabs.open({
 //        url: data.url('index.html'),
         url: 'https://openflint.github.io/flint-sharing/firefox/data/index.html',
