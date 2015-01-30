@@ -1,6 +1,6 @@
-var deviceScanner = new FlintDeviceScanner();
+//var deviceScanner = new FlintDeviceScanner();
 var stream = null;
-var device = null;
+var port_ = null;
 
 // app installed callback
 chrome.runtime.onInstalled.addListener(function () {
@@ -20,14 +20,24 @@ chrome.app.runtime.onLaunched.addListener(function () {
             'resizable': false
         },
         function (appWindow) {
-            appWindow.onClosed.addListener(function () {
-                console.log('window closed!');
-                deviceScanner.stop();
-            });
+            var deviceScanner = new FlintDeviceScanner();
+
+//            appWindow.onClosed.addListener(function () {
+//                console.log('window closed!');
+//                deviceScanner.stop();
+//                port_.disconnect();
+//            });
 
             console.log('create window ok: flint-sharing');
             chrome.runtime.onConnect.addListener(function (port) {
                 console.log('port on connected in background');
+                port_ = port;
+
+                appWindow.onClosed.addListener(function() {
+                    console.log('window closed!');
+                    deviceScanner.stop();
+                    port.disconnect();
+                });
 
                 port.onMessage.addListener(function (msg) {
                     console.log('port: ', msg);

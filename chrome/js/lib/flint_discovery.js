@@ -272,6 +272,7 @@ module.exports = SSDPResponderChrome;
 
 },{"../ssdp/SSDPResponder":10,"./UdpSocketChrome":6}],6:[function(require,module,exports){
 var EventEmitter, UdpSocketChrome,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -297,6 +298,8 @@ UdpSocketChrome = (function(_super) {
 
   function UdpSocketChrome(options) {
     this.options = options;
+    this._onReceiveErrorListener = __bind(this._onReceiveErrorListener, this);
+    this._onReceiveListener = __bind(this._onReceiveListener, this);
     this.localPort_ = options.localPort;
     this.loopback_ = options.loopback;
     this.socketId_ = -1;
@@ -321,24 +324,28 @@ UdpSocketChrome = (function(_super) {
           console.log('bind UdpSocket: port=', _this.localPort_, ', result=', result);
           return _this.emit('bind');
         });
-        chrome.sockets.udp.onReceive.addListener(function(info) {
-          if (_this.socketId_ === info.socketId) {
-            return _this._onMessage(UdpSocketChrome.ab2str(info.data));
-          }
-        });
-        chrome.sockets.udp.onReceive.addListener(function(info) {
-          if (_this.socketId_ === info.socketId) {
-            return _this._onError('error');
-          }
-        });
+        chrome.sockets.udp.onReceive.addListener(_this._onReceiveListener);
+        chrome.sockets.udp.onReceiveError.addListener(_this._onReceiveErrorListener);
         return _this.emit('create');
       };
     })(this));
   };
 
+  UdpSocketChrome.prototype._onReceiveListener = function(info) {
+    if (this.socketId_ === info.socketId) {
+      return this._onMessage(UdpSocketChrome.ab2str(info.data));
+    }
+  };
+
   UdpSocketChrome.prototype._onMessage = function(data) {
     if (this.onPacket) {
       return this.onPacket(data);
+    }
+  };
+
+  UdpSocketChrome.prototype._onReceiveErrorListener = function(info) {
+    if (this.socketId_ === info.socketId) {
+      return this._onError('error');
     }
   };
 
@@ -389,6 +396,8 @@ UdpSocketChrome = (function(_super) {
     if (this.socketId_) {
       return chrome.sockets.udp.close(this.socketId_, (function(_this) {
         return function() {
+          chrome.sockets.udp.onReceive.removeListener(_this._onReceiveListener);
+          chrome.sockets.udp.onReceiveError.removeListener(_this._onReceiveErrorListener);
           return console.log('socket closed! ', _this.socketId_);
         };
       })(this));
