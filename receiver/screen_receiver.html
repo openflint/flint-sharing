@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <title>Screen Receiver</title>
     <script src="//openflint.github.io/flint-web-sdk/out/flint_receiver_sdk.js"></script>
+
+    <style>
+        video {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: -100;
+        }
+    </style>
 </head>
 <body>
 <video id="video" autoplay></video>
