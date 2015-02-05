@@ -1,8 +1,9 @@
 #!/bin/sh
 
 # chrome
-#rm release/flint-sharing.crx
-#zip -q -r release/flint-sharing.crx chrome
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --pack-extension="./chrome"
+mv chrome.crx release/chrome/flint-sharing.crx
+mv chrome.pem release/chrome/flint-sharing.pem
 
 # firefox
 cd firefox
