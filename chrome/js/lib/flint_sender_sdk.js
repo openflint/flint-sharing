@@ -1,5 +1,133 @@
 /*! flint-web-sdk build:0.1.0, development. Copyright(C) 2013-2014 www.OpenFlint.org */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var dataBrowser = [
+    {
+        string: navigator.userAgent,
+        subString: "Chrome",
+        identity: "Chrome"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "OmniWeb",
+        versionSearch: "OmniWeb/",
+        identity: "OmniWeb"
+    },
+    {
+        string: navigator.vendor,
+        subString: "Apple",
+        identity: "Safari",
+        versionSearch: "Version"
+    },
+    {
+        prop: window.opera,
+        identity: "Opera",
+        versionSearch: "Version"
+    },
+    {
+        string: navigator.vendor,
+        subString: "iCab",
+        identity: "iCab"
+    },
+    {
+        string: navigator.vendor,
+        subString: "KDE",
+        identity: "Konqueror"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "Firefox",
+        identity: "Firefox"
+    },
+    {
+        string: navigator.vendor,
+        subString: "Camino",
+        identity: "Camino"
+    },
+    {		// for newer Netscapes (6+)
+        string: navigator.userAgent,
+        subString: "Netscape",
+        identity: "Netscape"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "MSIE",
+        identity: "Explorer",
+        versionSearch: "MSIE"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "Gecko",
+        identity: "Mozilla",
+        versionSearch: "rv"
+    },
+    { 		// for older Netscapes (4-)
+        string: navigator.userAgent,
+        subString: "Mozilla",
+        identity: "Netscape",
+        versionSearch: "Mozilla"
+    }
+];
+
+var dataOS = [
+    {
+        string: navigator.platform,
+        subString: "Win",
+        identity: "Windows"
+    },
+    {
+        string: navigator.platform,
+        subString: "Mac",
+        identity: "Mac"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "iPhone",
+        identity: "iPhone/iPod"
+    },
+    {
+        string: navigator.platform,
+        subString: "Linux",
+        identity: "Linux"
+    }
+];
+
+BrowserDetect = function () {
+};
+
+BrowserDetect.prototype.init = function () {
+    this.browser = this.searchString(dataBrowser) || "An unknown browser";
+    this.version = this.searchVersion(navigator.userAgent)
+        || this.searchVersion(navigator.appVersion)
+        || "an unknown version";
+    this.OS = this.searchString(dataOS) || "an unknown OS";
+};
+
+BrowserDetect.prototype.searchString = function (data) {
+    for (var i = 0; i < data.length; i++) {
+        var dataString = data[i].string;
+        var dataProp = data[i].prop;
+        this.versionSearchString = data[i].versionSearch || data[i].identity;
+        if (dataString) {
+            if (dataString.indexOf(data[i].subString) != -1)
+                return data[i].identity;
+        }
+        else if (dataProp)
+            return data[i].identity;
+    }
+};
+
+BrowserDetect.prototype.searchVersion = function (dataString) {
+    var sIndex = dataString.indexOf(this.versionSearchString);
+    if (sIndex == -1) return;
+    var reg = /(?:;|\s|$)/gi;
+    reg.lastIndex = sIndex = sIndex + this.versionSearchString.length + 1;
+    var eIndex = reg.exec(dataString).index;
+    return dataString.substring(sIndex, eIndex);
+    //return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+};
+
+module.exports = BrowserDetect;
+},{}],2:[function(require,module,exports){
 var FlintConstants;
 
 FlintConstants = (function() {
@@ -19,7 +147,7 @@ module.exports = FlintConstants;
 
 
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var EventEmitter, MessageBus,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -51,7 +179,7 @@ module.exports = MessageBus;
 
 
 
-},{"eventemitter3":16}],3:[function(require,module,exports){
+},{"eventemitter3":17}],4:[function(require,module,exports){
 var EventEmitter, MessageChannel,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -154,7 +282,44 @@ module.exports = MessageChannel;
 
 
 
-},{"eventemitter3":16}],4:[function(require,module,exports){
+},{"eventemitter3":17}],5:[function(require,module,exports){
+var BrowserDetect, Platform;
+
+BrowserDetect = require('./BrowserDetect');
+
+Platform = (function() {
+  function Platform() {}
+
+  Platform.detector = null;
+
+  Platform.getPlatform = function() {
+    var platform;
+    if (!Platform.detector) {
+      Platform.detector = new BrowserDetect();
+      Platform.detector.init();
+      if (Platform.detector.browser.toLowerCase() === 'firefox') {
+        if (window.MozActivity !== void 0) {
+          Platform.detector.browser = 'ffos';
+        }
+      }
+    }
+    platform = {
+      browser: Platform.detector.browser.toLowerCase(),
+      version: Platform.detector.version.toLowerCase(),
+      os: Platform.detector.OS.toLowerCase()
+    };
+    return platform;
+  };
+
+  return Platform;
+
+})();
+
+module.exports = Platform;
+
+
+
+},{"./BrowserDetect":1}],6:[function(require,module,exports){
 module.exports.RTCSessionDescription = window.RTCSessionDescription ||
 	window.mozRTCSessionDescription;
 module.exports.RTCPeerConnection = window.RTCPeerConnection ||
@@ -162,7 +327,7 @@ module.exports.RTCPeerConnection = window.RTCPeerConnection ||
 module.exports.RTCIceCandidate = window.RTCIceCandidate ||
 	window.mozRTCIceCandidate;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 var Negotiator = require('./negotiator');
@@ -431,7 +596,7 @@ DataConnection.prototype.handleMessage = function(message) {
 
 module.exports = DataConnection;
 
-},{"./negotiator":7,"./util":10,"eventemitter3":16,"reliable":19}],6:[function(require,module,exports){
+},{"./negotiator":9,"./util":12,"eventemitter3":17,"reliable":20}],8:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 var Negotiator = require('./negotiator');
@@ -528,7 +693,7 @@ MediaConnection.prototype.close = function() {
 
 module.exports = MediaConnection;
 
-},{"./negotiator":7,"./util":10,"eventemitter3":16}],7:[function(require,module,exports){
+},{"./negotiator":9,"./util":12,"eventemitter3":17}],9:[function(require,module,exports){
 var util = require('./util');
 var RTCPeerConnection = require('./adapter').RTCPeerConnection;
 var RTCSessionDescription = require('./adapter').RTCSessionDescription;
@@ -839,7 +1004,7 @@ Negotiator.handleCandidate = function(connection, ice) {
 
 module.exports = Negotiator;
 
-},{"./adapter":4,"./util":10}],8:[function(require,module,exports){
+},{"./adapter":6,"./util":12}],10:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 var Socket = require('./socket');
@@ -1338,7 +1503,7 @@ Peer.prototype.listAllPeers = function(cb) {
 
 module.exports = Peer;
 
-},{"./dataconnection":5,"./mediaconnection":6,"./socket":9,"./util":10,"eventemitter3":16}],9:[function(require,module,exports){
+},{"./dataconnection":7,"./mediaconnection":8,"./socket":11,"./util":12,"eventemitter3":17}],11:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 
@@ -1554,7 +1719,7 @@ Socket.prototype.close = function () {
 
 module.exports = Socket;
 
-},{"./util":10,"eventemitter3":16}],10:[function(require,module,exports){
+},{"./util":12,"eventemitter3":17}],12:[function(require,module,exports){
 var defaultConfig = {'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }]};
 var dataCount = 1;
 
@@ -1870,8 +2035,8 @@ var util = {
 
 module.exports = util;
 
-},{"./adapter":4,"js-binarypack":17}],11:[function(require,module,exports){
-var EventEmitter, FlintConstants, FlintSenderManager, Peer, SenderMessageBus, SenderMessageChannel,
+},{"./adapter":6,"js-binarypack":18}],13:[function(require,module,exports){
+var EventEmitter, FlintConstants, FlintSenderManager, Peer, Platform, SenderMessageBus, SenderMessageChannel,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1884,6 +2049,8 @@ SenderMessageBus = require('./SenderMessageBus');
 Peer = require('../peerjs/peer');
 
 FlintConstants = require('../common/FlintConstants');
+
+Platform = require('../common/Platform');
 
 FlintSenderManager = (function(_super) {
   __extends(FlintSenderManager, _super);
@@ -2199,7 +2366,15 @@ FlintSenderManager = (function(_super) {
   };
 
   FlintSenderManager.prototype._createXhr = function() {
-    throw 'Not Implement';
+    var platform;
+    platform = Platform.getPlatform().browser;
+    if (platform === 'ffos') {
+      return new XMLHttpRequest({
+        mozSystem: true
+      });
+    } else {
+      return new XMLHttpRequest();
+    }
   };
 
   FlintSenderManager.prototype._createMessageChannel = function() {
@@ -2326,7 +2501,7 @@ module.exports = FlintSenderManager;
 
 
 
-},{"../common/FlintConstants":1,"../peerjs/peer":8,"./SenderMessageBus":12,"./SenderMessageChannel":13,"eventemitter3":16}],12:[function(require,module,exports){
+},{"../common/FlintConstants":2,"../common/Platform":5,"../peerjs/peer":10,"./SenderMessageBus":14,"./SenderMessageChannel":15,"eventemitter3":17}],14:[function(require,module,exports){
 var MessageBus, SenderMessageBus,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2373,7 +2548,7 @@ module.exports = SenderMessageBus;
 
 
 
-},{"../common/MessageBus":2}],13:[function(require,module,exports){
+},{"../common/MessageBus":3}],15:[function(require,module,exports){
 var MessageChannel, SenderMessageChannel,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2395,39 +2570,12 @@ module.exports = SenderMessageChannel;
 
 
 
-},{"../common/MessageChannel":3}],14:[function(require,module,exports){
-var FlintSenderManager, FlintSenderManagerChrome,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-FlintSenderManager = require('../FlintSenderManager');
-
-FlintSenderManagerChrome = (function(_super) {
-  __extends(FlintSenderManagerChrome, _super);
-
-  function FlintSenderManagerChrome(options) {
-    this.options = options;
-    FlintSenderManagerChrome.__super__.constructor.call(this, options);
-  }
-
-  FlintSenderManagerChrome.prototype._createXhr = function() {
-    return new XMLHttpRequest();
-  };
-
-  return FlintSenderManagerChrome;
-
-})(FlintSenderManager);
-
-module.exports = FlintSenderManagerChrome;
+},{"../common/MessageChannel":4}],16:[function(require,module,exports){
+window.FlintSenderManager = require('./FlintSenderManager');
 
 
 
-},{"../FlintSenderManager":11}],15:[function(require,module,exports){
-window.FlintSenderManager = require('./FlintSenderManagerChrome');
-
-
-
-},{"./FlintSenderManagerChrome":14}],16:[function(require,module,exports){
+},{"./FlintSenderManager":13}],17:[function(require,module,exports){
 'use strict';
 
 /**
@@ -2658,7 +2806,7 @@ EventEmitter.EventEmitter3 = EventEmitter;
 //
 module.exports = EventEmitter;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var BufferBuilder = require('./bufferbuilder').BufferBuilder;
 var binaryFeatures = require('./bufferbuilder').binaryFeatures;
 
@@ -3179,7 +3327,7 @@ function utf8Length(str){
   }
 }
 
-},{"./bufferbuilder":18}],18:[function(require,module,exports){
+},{"./bufferbuilder":19}],19:[function(require,module,exports){
 var binaryFeatures = {};
 binaryFeatures.useBlobBuilder = (function(){
   try {
@@ -3245,7 +3393,7 @@ BufferBuilder.prototype.getBuffer = function() {
 
 module.exports.BufferBuilder = BufferBuilder;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var util = require('./util');
 
 /**
@@ -3565,7 +3713,7 @@ Reliable.prototype.onmessage = function(msg) {};
 
 module.exports.Reliable = Reliable;
 
-},{"./util":20}],20:[function(require,module,exports){
+},{"./util":21}],21:[function(require,module,exports){
 var BinaryPack = require('js-binarypack');
 
 var util = {
@@ -3662,4 +3810,4 @@ var util = {
 
 module.exports = util;
 
-},{"js-binarypack":17}]},{},[15]);
+},{"js-binarypack":18}]},{},[16]);

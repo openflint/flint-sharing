@@ -1,4 +1,3 @@
-//var deviceScanner = new FlintDeviceScanner();
 var stream = null;
 var port_ = null;
 
@@ -20,11 +19,11 @@ chrome.app.runtime.onLaunched.addListener(function () {
             'resizable': false
         },
         function (appWindow) {
-            var deviceScanner = new FlintDeviceScanner();
+            var deviceManager = new FlintDeviceManager();
 
 //            appWindow.onClosed.addListener(function () {
 //                console.log('window closed!');
-//                deviceScanner.stop();
+//                deviceManager.stop();
 //                port_.disconnect();
 //            });
 
@@ -35,7 +34,7 @@ chrome.app.runtime.onLaunched.addListener(function () {
 
                 appWindow.onClosed.addListener(function() {
                     console.log('window closed!');
-                    deviceScanner.stop();
+                    deviceManager.stop();
                     port.disconnect();
                 });
 
@@ -50,22 +49,22 @@ chrome.app.runtime.onLaunched.addListener(function () {
                     }
                 });
 
-                deviceScanner.on('devicefound', function (device) {
+                deviceManager.on('devicefound', function (device) {
                     console.log('background found: ', device);
                     port.postMessage({
                         type: 'devicefound',
-                        device: device.toJson()
+                        device: device
                     });
                 });
 
-                deviceScanner.on('devicegone', function (device) {
+                deviceManager.on('devicegone', function (device) {
                     port.postMessage({
                         type: 'devicegone',
                         device: device
                     });
                 });
 
-                deviceScanner.start();
+                deviceManager.start();
 
                 port.postMessage({
                     type: 'ready'
