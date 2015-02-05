@@ -1,3 +1,5 @@
+"use strict";
+
 const { Class }  = require('sdk/core/heritage');
 const { EventTarget } = require('sdk/event/target');
 const { emit } = require('sdk/event/core');
@@ -10,26 +12,32 @@ var Request = require("sdk/request").Request;
 const SSDPManager = Class({
     extends: EventTarget,
 
-    ssdpResponder_: null,
+    responder_: null,
 
     initialize: function () {
-        let self = this;
-        this.ssdpResponder_ = SSDPResponder();
-        this.ssdpResponder_.on('location', function (location) {
-            self._fetchDeviceDesc(location);
+        var self = this;
+        this.responder_ = new SSDPResponder();
+        this.responder_.on('servicefound', function (location) {
+            self._onServiceFound(location);
+        });
+        this.responder_.on('servicegone', function (location) {
+            self._onServiceGone(location);
         });
     },
 
     start: function () {
-        this.ssdpResponder_.start();
+        this.responder_.start();
     },
 
     stop: function () {
-        this.ssdpResponder_.stop();
+        this.responder_.stop();
     },
 
-    _fetchDeviceDesc: function (location) {
-        let self = this;
+    _onServiceGone: function (location) {
+    },
+
+    _onServiceFound: function (location) {
+        var self = this;
         Request({
             url: location,
             overrideMimeType: 'text/xml',
@@ -43,13 +51,13 @@ const SSDPManager = Class({
 
     _parseDeviceDesc: function (location, text) {
         try {
-            let device = {};
+            var device = {};
             device['location'] = location;
 
             var parser = Cc["@mozilla.org/xmlextras/domparser;1"].createInstance(Ci.nsIDOMParser);
-            let xml = parser.parseFromString(text, "text/xml");
-            let urlBase = null;
-            let urls = xml.querySelectorAll('URLBase');
+            var xml = parser.parseFromString(text, "text/xml");
+            var urlBase = null;
+            var urls = xml.querySelectorAll('URLBase');
             if ((urls != null) && (urls.length > 0)) {
                 urlBase = urls[0].innerHTML;
             } else {
@@ -58,7 +66,7 @@ const SSDPManager = Class({
 
             device['urlBase'] = urlBase;
 
-            let deviceNodeList = xml.querySelectorAll('device');
+            var deviceNodeList = xml.querySelectorAll('device');
             if ((deviceNodeList != null) && (deviceNodeList.length > 0)) {
                 device['uniqueId'] = deviceNodeList[0].querySelector("UDN").innerHTML + location;
                 device['deviceType'] = deviceNodeList[0].querySelector('deviceType').innerHTML;

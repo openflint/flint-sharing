@@ -1,9 +1,13 @@
 {
-  "name": "flint-sharing",
   "title": "flint-sharing",
-  "id": "jid1-GnBLgJ007mOV1w",
-  "description": "flint sharing",
+  "name": "flint-sharing",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
   "author": "Manson Li",
-  "license": "MPL 2.0",
-  "version": "0.1"
+  "engines": {
+    "firefox": ">=33.0a1",
+    "fennec": ">=33.0a1"
+  },
+  "license": "Apache"
 }

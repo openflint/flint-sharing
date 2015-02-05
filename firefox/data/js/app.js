@@ -40,7 +40,12 @@ share.onclick = function () {
         console.log('select device: ', device.value, ', text = ', device.text);
 
         var _stream = null;
-        var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', devices[device.value], true);
+        var senderManager = new FlintSenderManager({
+            appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
+            urlBase: devices[device.value].urlBase,
+            host: devices[device.value].host,
+            useHeartbeat: true
+        });
 
         getScreenId(function (error, sourceId, screen_constraints) {
             // Firefox

@@ -2,12 +2,8 @@ var buttons = require('sdk/ui/button/action');
 var tabs = require('sdk/tabs');
 var data = require('sdk/self').data;
 
-const { DeviceManager } = require('./DeviceManager');
-const { Enabler } = require('./Enabler');
-
-//const { FlintDeviceScanner } = require('./sdk/flint_discovery');
-const { ExportTest } = require('./sdk/ExportTest');
-const { SubTest } = require('./sdk/sub/SubTest');
+const { FlintDeviceManager } = require('./lib/discovery/FlintDeviceManager');
+const { Enabler } = require('./lib/Enabler');
 
 var button = buttons.ActionButton({
     id: 'flint-sharing',
@@ -25,19 +21,13 @@ var deviceManager = null;
 var pageWorker = null;
 
 function launchAddon(state) {
-    console.error('------------');
-    console.error('ExportTest------------', ExportTest);
-    console.error('SubText------------', SubTest);
-    var t = new SubTest();
-    t.logSub();
-    t.log();
-    console.error('------------');
+    console.log(FlintDeviceManager);
+
     tabs.open({
 //        url: data.url('index.html'),
         url: 'https://openflint.github.io/flint-sharing/firefox/data/index.html',
         onOpen: function (tab) {
             console.log('tab is open!!!');
-
             _onOpen();
         },
         onReady: function (tab) {
@@ -57,8 +47,6 @@ function launchAddon(state) {
         onClose: function (tab) {
             console.warn('tab is close!!!');
 
-
-
             _onClose();
         }
     });
@@ -70,7 +58,7 @@ function _onOpen() {
 function _onReady() {
     enabler.setup();
 
-    deviceManager = DeviceManager();
+    deviceManager = FlintDeviceManager();
 
     deviceManager.on('devicefound', function (device) {
         pageWorker.port.emit('devicefound', device);

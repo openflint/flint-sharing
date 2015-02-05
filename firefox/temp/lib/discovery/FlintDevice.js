@@ -4,7 +4,7 @@ const { emit } = require('sdk/event/core');
 
 var timer = require('sdk/timers');
 
-const Device = Class({
+const FlintDevice = Class({
     extends: EventTarget,
 
     uniqueId_: null,
@@ -32,16 +32,15 @@ const Device = Class({
     },
 
     triggerTimer: function () {
-//        console.log(this.uniqueId_, ' trigger timer!!!');
-        let self = this;
+        var self = this;
         this._clearTimer();
         this.timerId_ = timer.setTimeout(function () {
-            self._onTimerOut();
+            self._onTimeout();
         }, 30 * 1000);
     },
 
-    _onTimerOut: function () {
-        emit(this, 'devicelost', this.uniqueId_);
+    _onTimeout: function () {
+        emit(this, 'devicegone', this.uniqueId_);
     },
 
     clear: function () {
@@ -84,7 +83,7 @@ const Device = Class({
         return this.host_;
     },
 
-    getDevice: function () {
+    toJson: function () {
         return {
             uniqueId: this.uniqueId_,
             location: this.location_,
@@ -98,4 +97,4 @@ const Device = Class({
     }
 });
 
-exports.Device = Device;
+exports.FlintDevice = FlintDevice;

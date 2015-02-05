@@ -9,7 +9,7 @@ Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 
 XPCOMUtils.defineLazyGetter(this, 'converter', function () {
-    let conv = Cc['@mozilla.org/intl/scriptableunicodeconverter'].createInstance(Ci.nsIScriptableUnicodeConverter);
+    var conv = Cc['@mozilla.org/intl/scriptableunicodeconverter'].createInstance(Ci.nsIScriptableUnicodeConverter);
     conv.charset = 'utf8';
     return conv;
 });
@@ -18,39 +18,29 @@ const UDPSocket = Class({
     extends: EventTarget,
 
     socket_: null,
-    addr_: null,
-    port_: 0,
 
-    initialize: function (addr, port) {
-        this.addr_ = addr;
-        this.port_ = port;
-
+    initialize: function (options) {
         this.socket_ = Cc['@mozilla.org/network/udp-socket;1'].createInstance(Ci.nsIUDPSocket);
         if (this.socket_ == null) {
-            console.error('UDPSocket: create socket failed!');
-            return;
+            throw 'UDPSocket: create socket failed!';
         }
+
+        this.socket_.init(options.localPort, options.loopback);
+        this.socket_.asyncListen(this);
     },
 
-    start: function () {
-        try {
-            this.socket_.init(this.port_, false);
-            this.socket_.joinMulticast(this.addr_);
-            this.socket_.asyncListen(this);
-        } catch (e) {
-            console.error('UDPSocket: failed to init socket: ' + e);
-            return;
-        }
+    joinMulticastGroup: function (addr) {
+        this.socket_.joinMulticast(addr);
     },
 
-    stop: function () {
+    close: function () {
         this.socket_.close();
     },
 
-    send: function (packet) {
+    send: function (data, addr, port) {
         try {
-            let packetRaw = converter.convertToByteArray(packet);
-            this.socket_.send(this.addr_, this.port_, packetRaw, packetRaw.length);
+            var packet = converter.convertToByteArray(data);
+            this.socket_.send(addr, port, packet, packet.length);
         } catch (e) {
             console.error('UDPSocket: send error : ' + e);
         }
