@@ -33,6 +33,14 @@ function launchAddon(state) {
         onReady: function (tab) {
             console.log('tab is ready!!!');
 
+            if (deviceManager != null) {
+                console.log('deviceManager is not null!!! close it!!!');
+                tab.close(function() {
+                    console.log('deviceManager is not null!!! close it!!! done');
+                });
+                return;
+            }
+
             pageWorker = tab.attach({
                 contentScriptFile: [
                     data.url('js/flint_sender_sdk.js'),
