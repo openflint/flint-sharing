@@ -1,21 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="img/s.css">
+    <meta charset="utf-8"/>
+</head>
+<body>
+<header>
+    <div class="inner">
+        <h1>我的设备</h1>
+    </div>
+</header>
+<section class="body">
+    
+    <div id="nodevice" class="ctable nodevice">
+        <h1 class="center">未发现设备</h1>
+    </div>
+    <div id="devices" class="devices hide">
+        <ul id="selector" class="selector"></ul>
+    </div>
+
+</section>
+<footer class="ctable">
+    <div class="center">
+        <button id="share" class="btn btn-share">投射屏幕</button>
+        <button id="stop" class="btn btn-stop hide">停止投射</button>
+    </div>
+</footer>
+
+<div class="hide">
+    <div id="temp-device">
+        <li class="clearfix" device_id="##device_id##" device_name="##device_name##">
+            <div class="selector-inner inner">
+                <i></i>
+                <div>
+                    <h3>##device_name##</h3>
+                    <p>##device_ip##</p>
+                </div>
+            </div>
+        </li>
+    </div>
+</div>
+</body>
     <script src="js/lib/jquery.min.js"></script>
     <script src="js/lib/flint_sender_sdk.js"></script>
     <script src="js/content_scripts/screen.js"></script>
     <script src="js/content_scripts/app.js"></script>
-</head>
-<body>
-<div id="devices">
-    <select id="dlist">
-        <option value="">Please choose a device</option>
-    </select>
-</div>
-
-<div id="control">
-    <button id="share">Share</button>
-    <button id="stop">Stop</button>
-</div>
-</body>
 </html>

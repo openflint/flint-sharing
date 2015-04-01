@@ -1,0 +1,205 @@
+@charset "utf-8";
+
+@-webkit-keyframes btn-hover {
+    from {background-color: inherit; color: #000}
+    to {background-color: #4A4A4A; color: #FFF}
+}
+
+@keyframes btn-hover {
+    from {background-color: inherit; color: #000}
+    to {background-color: #4A4A4A; color: #FFF}
+}
+
+@-webkit-keyframes device-hover {
+    from {background-color: inherit;}
+    to {background-color: #eaeced;}
+}
+
+@keyframes device-hover {
+    from {background-color: inherit;}
+    to {background-color: #eaeced;}
+}
+
+html {
+    font-size: 1em;
+    font-family: "Lucida Family", Helvetica, Arial, Tahoma, "Trebuchet MS",sans-serif;
+    background: #F3F5F7;
+    overflow: auto
+}
+body { 
+    margin: 0;
+    color: #333;
+    height: 100%
+}
+
+div, form, img, ul, ol, li, dl, dt, dd, p, h1{
+    border: 0;
+    margin: 0; 
+    padding: 0
+}
+
+ul li { 
+    list-style: none outside none
+}
+a, a:link { 
+    color: #333;
+    text-decoration: none
+}
+a:visited { 
+    color: #333
+}
+a:active {
+    color: #f48d26
+}
+a:hover {
+    color: #f48d26
+}
+
+h1{
+    margin-bottom: 15px
+}
+h1{
+    font-size: 2em
+}
+.clearfix:after {
+    content: ".";
+    display: block; 
+    height: 0; 
+    clear: both; 
+    overflow: hidden
+}
+.clearfix { 
+    display: block
+}
+
+.hide{
+    display: none !important;
+}
+
+hr{
+    height:0px; 
+    border:0;
+    border-top:1px solid #E5E4E2;
+    margin-bottom: 1.5em;
+}
+
+i{
+    background: url("i.png") scroll no-repeat 0 0;
+    display: inline-block
+}
+
+header{
+    color: #0DC5C7;
+    background: #FFF;
+    height: 100px;
+    line-height: 100px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%
+}
+footer{
+    background: #FFF;
+    height: 100px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%
+}
+.body{
+    margin-top: 100px;
+    margin-bottom: 100px
+}
+
+.inner{
+    padding-left: 40px
+}
+
+.ctable{
+    display: table;
+    width: 100%;
+}
+.ctable .center{
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle
+}
+
+.btn{
+    border: none;
+    font-size: 1.5em;
+    color: #FFF;
+    padding: 0.5em 3em;
+    border-radius: 10px;
+    cursor: pointer
+}
+.btn:hover{
+    background-color: #4A4A4A;
+    -webkit-animation: btn-hover .5s;
+    animation: btn-hover .5s
+}
+.btn.active{
+    background-color: #4A4A4A
+}
+
+.btn-share{
+    background-color: #0DC5C7
+}
+.btn-stop{
+    background-color: #F77070
+}
+
+.nodevice{
+    height: 400px
+}
+
+.selector-inner{
+    margin-top: 40px;
+    margin-bottom: 40px
+}
+
+.devices li{
+    cursor: pointer
+}
+.devices li:hover{
+    background-color: #eaeced;
+    -webkit-animation: device-hover .6s;
+    animation: device-hover .6s
+}
+.devices li.active{
+    background-color: #E1E3E4
+}
+.devices li.active:hover{
+    -webkit-animation: none;
+    animation: none
+}
+
+.devices li i{
+    float: left;
+    margin-right: 10px
+}
+.devices li div{
+    float: left;
+    margin-left: 5px
+}
+.devices li div h3{
+    margin: 0;
+    color: #666;
+    margin-bottom: 5px;
+}
+.devices li div p{
+    margin: 0;
+    font-weight: bold;
+    color: #0DC5C7
+}
+
+.devices i{
+    width: 39px;
+    height: 39px;
+}
+.devices .active i{
+    width: 39px;
+    height: 39px;
+    background-position: -40px 0
+}
