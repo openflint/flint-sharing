@@ -14,9 +14,11 @@ chrome.app.runtime.onLaunched.addListener(function () {
             'id': 'flint-sharing',
             'innerBounds': {
                 'width': 600,
-                'height': 800
+                'height': 500,
+                'minHeight': 400,
+                'maxHeight': 600
             },
-            'resizable': false
+            'resizable': true
         },
         function (appWindow) {
             var deviceManager = new FlintDeviceManager();
