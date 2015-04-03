@@ -40,6 +40,9 @@ var devices = {},
     domDevices = null,
     domDeviceSelectors = null,
     domTempDevice = null,
+    domState = null,
+    domStateText = null,
+
     currDevice = null,
     wStream = null,
     senderManager = null;
@@ -48,6 +51,13 @@ var port = chrome.runtime.connect();
 
 function bindSelectorEvent(){
     var dlist = document.querySelectorAll("#selector li");
+
+    if(dlist.length==1){
+        addClass(dlist[0], "active");
+        currDevice = {
+            "id": dlist[0].getAttribute("device_id"),
+            "name": dlist[0].getAttribute("device_name")};
+    }
     for(var i=0; i<dlist.length; i++){
         dlist[i].onclick = function(){
             var did = this.getAttribute("device_id");
@@ -100,6 +110,10 @@ function ready() {
     domNodevice = document.querySelector("#nodevice");
     domDevices = document.querySelector("#devices");
 
+    domState = document.querySelector("#state");
+    domStateText = document.querySelector("#state-text");
+    
+
     shareBtn = document.querySelector("#share");
     stopBtn = document.querySelector("#stop");
 
@@ -122,6 +136,9 @@ function ready() {
 
         } else {
             console.log('select device: ', currDevice["id"], ', text = ', currDevice["name"]);
+
+            domStateText.innerHTML = "屏幕投射中";
+            removeClass(domState, "hide");
 
             getStream(function (error, stream) {
                 wStream = stream;
@@ -149,6 +166,7 @@ function ready() {
                 senderManager.launch(appInfo, function (result, token) {
                     if (result) {
                         console.log('Application is launched ! OK!!! -> ' + token);
+
                         senderManager.callReceiverMediaPeer(wStream);
                         senderManager.on('appstate', function (_, state, additionaldata) {
                             if (state == 'stopped') {
@@ -168,6 +186,8 @@ function ready() {
                         console.log('Application is launched ! failed!!!');
                     }
                     removeClass(shareBtn, "active");
+
+                    addClass(domState, "hide");
                 });
                 chrome.app.window.current().onClosed.addListener(function () {
                     sharing = false;
@@ -196,5 +216,6 @@ function ready() {
         senderManager = null;
         removeClass(shareBtn, "hide");
         addClass(stopBtn, "hide");
+        addClass(domState, "hide");
     };
 }
