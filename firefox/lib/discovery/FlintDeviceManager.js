@@ -15,6 +15,8 @@ const FlintDeviceManager = Class({
 
     devices_: {},
 
+    found: false,
+
     initialize: function () {
         var self = this;
         this.manager_ = new SSDPManager();
@@ -25,6 +27,16 @@ const FlintDeviceManager = Class({
                 self.devices_[uniqueId].triggerTimer();
             }
         });
+        setTimeout(function () {
+            if (!self.found) {
+                console.log('cannot find device in 10s, stop SSDPManager');
+                self.stop();
+                setTimeout(function () {
+                    console.log('cannot find device in 10s, restart SSDPManager');
+                    self.start();
+                }, 3 * 1000);
+            }
+        }, 10 * 1000);
     },
 
     start: function () {
@@ -44,6 +56,7 @@ const FlintDeviceManager = Class({
         this.devices_[uniqueId].triggerTimer();
 
         emit(this, 'devicefound', this.devices_[uniqueId].toJson());
+        self.found = true;
     },
 
     _onDeviceGone: function (uniqueId) {
@@ -54,8 +67,8 @@ const FlintDeviceManager = Class({
 
     getDevices: function () {
         var devices = [];
-        for (var _device in this.devices_) {
-            devices.push(this.devices_[_device]);
+        for (var _, value in this.devices_) {
+            devices.push(value);
         }
         return devices;
     }

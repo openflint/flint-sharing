@@ -98,6 +98,7 @@ FlintDeviceManager = (function(_super) {
   __extends(FlintDeviceManager, _super);
 
   function FlintDeviceManager() {
+    this.found = false;
     this.devices = {};
     this.ssdpManager = new SSDPManager();
     this.ssdpManager.on('devicefound', (function(_this) {
@@ -109,6 +110,18 @@ FlintDeviceManager = (function(_super) {
         }
       };
     })(this));
+    setTimeout(((function(_this) {
+      return function() {
+        if (!_this.found) {
+          console.log('cannot find device in 10s, stop SSDPManager');
+          _this.stop();
+          return setTimeout((function() {
+            console.log('cannot find device in 10s, restart SSDPManager');
+            return _this.start();
+          }), 3 * 1000);
+        }
+      };
+    })(this)), 10 * 1000);
   }
 
   FlintDeviceManager.prototype._onDeviceFound = function(uniqueId, device) {
@@ -120,7 +133,8 @@ FlintDeviceManager = (function(_super) {
         return _this._onDeviceGone(_uniqueId);
       };
     })(this));
-    return this.emit('devicefound', _device.toJson());
+    this.emit('devicefound', _device.toJson());
+    return this.found = true;
   };
 
   FlintDeviceManager.prototype._onDeviceGone = function(uniqueId) {
