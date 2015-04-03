@@ -56,9 +56,6 @@ a:hover {
 }
 
 h1{
-    margin-bottom: 15px
-}
-h1{
     font-size: 2em
 }
 .clearfix:after {
@@ -98,6 +95,19 @@ header{
     left: 0;
     width: 100%
 }
+header h1{
+    float: left
+}
+header .state{
+    float: right;
+    font-size: 1.2em;
+    color: #F77070
+}
+
+header .state img{
+    vertical-align: middle
+}
+
 footer{
     background: #FFF;
     height: 100px;
@@ -113,7 +123,8 @@ footer{
 }
 
 .inner{
-    padding-left: 40px
+    padding-left: 40px;
+    padding-right: 40px
 }
 
 .ctable{

@@ -8,12 +8,20 @@
 <header>
     <div class="inner">
         <h1>我的设备</h1>
+        <div id="state" class="state hide">
+            <span id="state-text"></span>
+            <img src="img/l-b.svg"/>
+        </div>
     </div>
 </header>
 <section class="body">
     
     <div id="nodevice" class="ctable nodevice">
-        <h1 class="center">未发现设备</h1>
+        <div class="center">
+            <h1>设备搜索中</h1>
+            <div><img src="img/l.svg"/></div>
+        </div>
+        
     </div>
     <div id="devices" class="devices hide">
         <ul id="selector" class="selector"></ul>
