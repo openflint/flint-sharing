@@ -16,7 +16,7 @@
         "udp": {
             "send": ":1900",
             "bind": ":1900",
-            "multicastMembership": "" // it chrome's bug, cannot be * here
+            "multicastMembership": ""
         }
     },
     "permissions": [
