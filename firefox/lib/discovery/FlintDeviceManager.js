@@ -8,6 +8,8 @@ const { Cc, Ci, Cu } = require('chrome');
 const { SSDPManager } = require('./SSDPManager');
 const { FlintDevice } = require('./FlintDevice');
 
+var timer = require('sdk/timers');
+
 const FlintDeviceManager = Class({
     extends: EventTarget,
 
@@ -27,11 +29,11 @@ const FlintDeviceManager = Class({
                 self.devices_[uniqueId].triggerTimer();
             }
         });
-        setTimeout(function () {
+        timer.setTimeout(function () {
             if (!self.found) {
                 console.log('cannot find device in 10s, stop SSDPManager');
                 self.stop();
-                setTimeout(function () {
+                timer.setTimeout(function () {
                     console.log('cannot find device in 10s, restart SSDPManager');
                     self.start();
                 }, 3 * 1000);
@@ -67,8 +69,8 @@ const FlintDeviceManager = Class({
 
     getDevices: function () {
         var devices = [];
-        for (var _, value in this.devices_) {
-            devices.push(value);
+        for (var key in this.devices_) {
+            devices.push(this.devices_[key]);
         }
         return devices;
     }
