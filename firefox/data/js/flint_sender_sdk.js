@@ -2453,15 +2453,18 @@ FlintSenderManager = (function(_super) {
       port: '9433',
       secure: false
     });
-    if (this.additionalData['dataPeerId']) {
-      peer.connect(this.additionalData['dataPeerId'], options);
-    } else {
-      this.once('dataPeerId' + 'available', (function(_this) {
-        return function(peerId) {
-          return peer.connect(peerId, options);
-        };
-      })(this));
-    }
+    peer.on('open', (function(_this) {
+      return function(peerId) {
+        console.log('peer [', peerId, '] opened!!!');
+        if (_this.additionalData['dataPeerId']) {
+          return peer.connect(_this.additionalData['dataPeerId'], options);
+        } else {
+          return _this.once('dataPeerId' + 'available', function(peerId) {
+            return peer.connect(peerId, options);
+          });
+        }
+      };
+    })(this));
     return peer;
   };
 
@@ -2472,15 +2475,18 @@ FlintSenderManager = (function(_super) {
       port: '9433',
       secure: false
     });
-    if (this.additionalData['mediaPeerId']) {
-      peer.call(this.additionalData['mediaPeerId'], stream, options);
-    } else {
-      this.once('mediaPeerId' + 'available', (function(_this) {
-        return function(peerId) {
-          return peer.call(peerId, stream, options);
-        };
-      })(this));
-    }
+    peer.on('open', (function(_this) {
+      return function(peerId) {
+        console.log('peer [', peerId, '] opened!!!');
+        if (_this.additionalData['mediaPeerId']) {
+          return peer.call(_this.additionalData['mediaPeerId'], stream, options);
+        } else {
+          return _this.once('mediaPeerId' + 'available', function(peerId) {
+            return peer.call(peerId, stream, options);
+          });
+        }
+      };
+    })(this));
     return peer;
   };
 
