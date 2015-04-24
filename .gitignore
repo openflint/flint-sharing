@@ -29,3 +29,4 @@ node_modules
 
 .idea/
 flint-web-sdk/
+release/
