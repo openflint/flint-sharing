@@ -182,6 +182,22 @@ function ready() {
 
                         addClass(shareBtn, "hide");
                         removeClass(stopBtn, "hide");
+
+                        wStream.onended = function() {
+                            console.warn('media ended!!!');
+                            sharing = false;
+                            if (wStream != null) {
+                                wStream.stop();
+                                wStream = null;
+                            }
+                            if (senderManager != null) {
+                                senderManager.stop(appInfo);
+                                senderManager = null;
+                            }
+                            removeClass(shareBtn, "hide");
+                            addClass(stopBtn, "hide");
+                            addClass(domState, "hide");
+                        };
                     } else {
                         console.log('Application is launched ! failed!!!');
                     }
@@ -195,8 +211,10 @@ function ready() {
                         wStream.stop();
                         wStream = null;
                     }
-                    senderManager.stop(appInfo);
-                    senderManager = null;
+                    if (senderManager != null) {
+                        senderManager.stop(appInfo);
+                        senderManager = null;
+                    }
                 });
             });
         }
