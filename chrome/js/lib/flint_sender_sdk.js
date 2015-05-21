@@ -1688,7 +1688,7 @@ Socket.prototype.send = function (data) {
 
     // If we didn't get an ID yet, we can't yet send anything so we should queue
     // up these messages.
-    if (!this.id) {
+    if (!this.id || !this._wsOpen()) { // only sent it from ws
         this._queue.push(data);
         return;
     }
